@@ -1,0 +1,56 @@
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+
+  /* Keep the controls visible while scrolling and place them on the left */
+  position: fixed;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  z-index: 1000;
+  padding: 0.25rem;
+}
+
+/* On small screens, move the controls to the bottom center and make them horizontal */
+@media (max-width: 640px) {
+  .controls {
+    left: 50%;
+    top: auto;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    flex-direction: row;
+  }
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.08s ease;
+  color: inherit;
+  font-size: 1.05rem;
+}
+
+.control:focus {
+  outline: 2px solid rgba(59,130,246,0.6);
+  outline-offset: 2px;
+}
+
+.control:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+.active-btn {
+  background: var(--foreground, #111);
+  color: var(--background, #fff);
+  transform: scale(1.03);
+}

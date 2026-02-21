@@ -1,0 +1,9 @@
+{
+  "Hero": {
+    "mainTitle": "Bina produk <important>menarik</important> dengan pantas.",
+    "description": "Permulaan minimalis untuk melancarkan laman web dengan Next.js, Tailwind dan HeroUI — direka untuk kelajuan dan kejelasan.",
+    "getStarted": "Bermula sekarang",
+    "learnMore": "Ketahui lebih lanjut",
+    "footer": "Dibina dengan <next>Next.js</next> & <hero>HeroUI</hero>"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "Index": {
+    "title": "在 {year} 年构建未来："
+  },
+  "Hero": {
+    "mainTitle": "快速构建<important>精美</important>产品",
+    "description": "一个极简且有主见的启动模板，使用 Next.js、Tailwind 和 HeroUI 构建 — 专为速度和清晰度而设计。",
+    "getStarted": "开始使用",
+    "learnMore": "了解更多",
+    "footer": "由 <next>Next.js</next> 和 <hero>HeroUI</hero> 驱动"
+  },
+  "Navbar": {
+    "home": "首页",
+    "docs": "文档",
+    "pricing": "价格",
+    "blog": "博客",
+    "about": "关于我们"
+  }
+}
