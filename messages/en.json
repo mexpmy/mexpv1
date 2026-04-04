@@ -1,9 +1,12 @@
 {
+  "Index": {
+    "title": "Tech Analysis"
+  },
   "Hero": {
     "mainTitle": "Build for <important>MExp Construction</important>.",
     "description": "Sharing knowledge",
-    "getStarted": "Get started",
-    "learnMore": "Ash Marine Project",
+    "getStarted": "MExp Portal",
+    "learnMore": "Digital Twin",
     "footer": "Built by <next>Syahmi</next> for <hero>MExp</hero>"
   }
 }

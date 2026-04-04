@@ -16,7 +16,7 @@ export function Providers({ children, messages, locale }: any) {
         defaultTheme="system" 
         enableSystem
       >
-        <NextIntlClientProvider messages={messages} locale={locale}>
+        <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
           {children}
         </NextIntlClientProvider>
       </NextThemesProvider>

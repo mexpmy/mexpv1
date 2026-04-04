@@ -14,12 +14,12 @@ export const Hero = () => {
     <section className="relative overflow-hidden py-20">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-default-50/40 to-transparent dark:from-default-900/40"
+        className="pointer-events-none absolute inset-0 -z-10"
       />
 
       <div className="mx-auto max-w-4xl px-6 text-center">
         <CustomLogo className="mx-auto mb-6 animate-bounce" size={80} />
-        
+
         <h1 className={`${title({ size: "lg" })} tracking-tight text-4xl md:text-6xl`}>
           {/* Using Rich Text to keep the gradient styling */}
           {t.rich('mainTitle', {
@@ -38,14 +38,14 @@ export const Hero = () => {
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
             className={buttonStyles({ color: "primary", radius: "full", variant: "shadow" })}
-            href="/"
+            href="https://pro.mymexp.com"
           >
             {t('getStarted')}
           </Link>
 
           <Link
             className={buttonStyles({ variant: "bordered", radius: "full" })}
-            href="http://192.168.1.105:3005/"
+            href="https://portal.mymexp.com"
           >
             {t('learnMore')}
           </Link>

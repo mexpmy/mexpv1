@@ -12,6 +12,11 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  allowedDevOrigins: [
+    '192.168.1.105',
+    'landscape.mymexp.com',
+    'mymexp.com',
+  ],
 };
 
 // DELETE the module.exports line that was here

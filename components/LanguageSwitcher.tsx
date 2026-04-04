@@ -8,7 +8,7 @@ import {
   Button,
   Avatar,
 } from "@heroui/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 
 const languages = [
@@ -25,10 +25,7 @@ export default function LanguageSwitcher() {
   const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
 
   const handleLanguageChange = (newLocale: string) => {
-    // Safely update the locale in the URL path
-    const segments = pathname.split('/');
-    segments[1] = newLocale;
-    router.push(segments.join('/'));
+    router.replace(pathname, { locale: newLocale });
   };
 
   return (

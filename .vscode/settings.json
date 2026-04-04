@@ -1,4 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "markdown.validate.enabled": true
+  "markdown.validate.enabled": true,
+  "css.customData": [],
+  "css.lint.unknownAtRules": "ignore"
 }

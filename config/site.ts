@@ -10,7 +10,7 @@ export const siteConfig = {
     },
     {
       label: "Docs",
-      href: "/docs",
+      href: "https://portal.mymexp.com",
     },
     {
       label: "Shop",
@@ -18,11 +18,11 @@ export const siteConfig = {
     },
     {
       label: "Portfolio",
-      href: "http://192.168.1.105:5000",
+      href: "https://pro.mymexp.com",
     },
     {
       label: "Blog",
-      href: "http://192.168.1.105:3001",
+      href: "https://mymexp.hashnode.dev",
     },
     {
       label: "About",
@@ -67,7 +67,7 @@ export const siteConfig = {
     github: "https://github.com/mexpmy",
     twitter: "https://x.com/SyahmiSaadon",
     docs: "https://heroui.com",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
+    instagram: "https://www.instagram.com/marineexpeditors/",
+    sponsor: "https://mymexp.hashnode.dev",
   },
 };

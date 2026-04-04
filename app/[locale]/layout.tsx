@@ -31,7 +31,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body className="min-h-screen font-sans antialiased bg-transparent">
         <Providers messages={messages} locale={locale}>
           <div className="relative flex flex-col h-screen">
             <Navbar />
