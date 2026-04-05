@@ -33,7 +33,7 @@ export default async function LocaleLayout({
     <html lang={locale} suppressHydrationWarning>
       <body className="min-h-screen font-sans antialiased bg-transparent">
         <Providers messages={messages} locale={locale}>
-          <div className="relative flex flex-col h-screen">
+          <div className="relative flex flex-col min-h-screen">
             <Navbar />
             <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
               {children}

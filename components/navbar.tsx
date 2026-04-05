@@ -118,21 +118,18 @@ export const Navbar = () => {
       <NavbarMenu>
         {searchInput}
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
-                size="lg"
+          {siteConfig.navItems.map((item, index) => (
+            <NavbarMenuItem key={`${item.label}-${index}`}>
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  "text-lg",
+                )}
+                color="foreground"
+                href={item.href}
               >
                 {item.label}
-              </Link>
+              </NextLink>
             </NavbarMenuItem>
           ))}
         </div>
