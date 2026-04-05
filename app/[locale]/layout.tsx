@@ -1,11 +1,11 @@
 import { getMessages } from 'next-intl/server';
-import { Providers } from "@/components/providers"; 
+import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import "@/styles/globals.css";
 import { Metadata } from "next";
 
 // 1. Move this here (outside the function)
-export const dynamic = 'force-dynamic'; 
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: {
@@ -14,18 +14,18 @@ export const metadata: Metadata = {
   },
   description: "My digital Lab",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/logo.png",
   },
 };
 
 export default async function LocaleLayout({
   children,
   params
-}:{
+}: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) { // <--- 2. Ensure this opening bracket is here!
-  
+
   const { locale } = await params;
   const messages = await getMessages();
 
