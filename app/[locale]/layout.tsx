@@ -3,6 +3,7 @@ import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import "@/styles/globals.css";
 import { Metadata } from "next";
+import Script from "next/script";
 
 // 1. Move this here (outside the function)
 export const dynamic = 'force-dynamic';
@@ -31,6 +32,16 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        {<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4548223576832848"
+          crossOrigin="anonymous"></script>}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+          crossOrigin="anonymous"
+          strategy="afterInteractive" // Loads after the page becomes interactive
+        />
+      </head>
       <body className="min-h-screen font-sans antialiased bg-transparent">
         <Providers messages={messages} locale={locale}>
           <div className="relative flex flex-col min-h-screen">
