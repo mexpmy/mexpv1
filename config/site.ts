@@ -22,7 +22,7 @@ export const siteConfig = {
     },
     {
       label: "Blog",
-      href: "https://mymexp.hashnode.dev",
+      href: "/blog",
     },
     {
       label: "About",
