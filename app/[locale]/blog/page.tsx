@@ -47,6 +47,10 @@ export default function BlogPage() {
                   Deconstructing the 1990 Hypertext Project structural foundations.
                 </p>
               </div>
+              <div className="mt-4 text-slate-500 font-mono text-sm md:text-base uppercase tracking-wider">
+                by Syahmi Saadon <br />
+                Universiti Teknologi Malaysia
+              </div>
 
               <article className="prose prose-invert prose-emerald max-w-none border-t border-white/10 pt-16">
                 <div className="text-xl leading-relaxed text-slate-300 space-y-8">
