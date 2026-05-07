@@ -3,34 +3,69 @@ import React, { useState, useEffect, useRef } from 'react';
 import EngineeringDataViz from '@/components/EngineeringDataViz';
 
 const RetroTerminal = ({ text }: { text: string }) => {
-  // Now useState, useRef, and useEffect will work
   const [displayedText, setDisplayedText] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const index = useRef(0);
 
+  // 1. Detect when the user scrolls to this section
   useEffect(() => {
-    setDisplayedText("");
-    index.current = 0;
-    const timer = setInterval(() => {
-      if (index.current < text.length) {
-        setDisplayedText((prev) => prev + text.charAt(index.current));
-        index.current++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 30);
-    return () => clearInterval(timer);
-  }, [text]);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.5 } // Trigger when 50% visible
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // 2. Typing animation logic with 5s delay repeat
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let repeatTimer: NodeJS.Timeout;
+
+    const startTyping = () => {
+      setDisplayedText("");
+      index.current = 0;
+
+      const typingInterval = setInterval(() => {
+        if (index.current < text.length) {
+          setDisplayedText((prev) => prev + text.charAt(index.current));
+          index.current++;
+        } else {
+          clearInterval(typingInterval);
+          // Wait 5 seconds after text is finished, then restart
+          repeatTimer = setTimeout(startTyping, 5000);
+        }
+      }, 30);
+    };
+
+    startTyping();
+
+    return () => clearTimeout(repeatTimer);
+  }, [isVisible, text]);
 
   return (
-    <div className="relative overflow-hidden bg-black p-8 font-mono text-[#33ff33] min-h-[200px] border-2 border-green-900 shadow-[0_0_15px_rgba(34,197,94,0.2)] my-8">
+    <div
+      ref={containerRef}
+      className="relative overflow-hidden bg-black p-8 font-mono text-[#33ff33] min-h-[200px] border-2 border-green-900 shadow-[0_0_15px_rgba(34,197,94,0.2)] my-8 rounded-lg"
+    >
+      {/* CRT Scanline Effect */}
       <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_2px,3px_100%]" />
-      <pre className="relative z-20 whitespace-pre-wrap [text-shadow:0_0_8px_rgba(51,255,51,0.8)]">
+
+      <pre className="relative z-20 whitespace-pre-wrap [text-shadow:0_0_8px_rgba(51,255,51,0.8)] leading-relaxed">
         {displayedText}
         <span className="inline-block w-3 h-5 bg-[#33ff33] animate-pulse ml-1 align-middle" />
       </pre>
     </div>
   );
 };
+
 
 export default function BlogPage() {
   return (
