@@ -13,10 +13,6 @@ export const siteConfig = {
       href: "https://portal.mymexp.com",
     },
     {
-      label: "Shop",
-      href: "/pricing",
-    },
-    {
       label: "Portfolio",
       href: "https://pro.mymexp.com",
     },
