@@ -1,5 +1,36 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
 import EngineeringDataViz from '@/components/EngineeringDataViz';
+
+const RetroTerminal = ({ text }: { text: string }) => {
+  // Now useState, useRef, and useEffect will work
+  const [displayedText, setDisplayedText] = useState('');
+  const index = useRef(0);
+
+  useEffect(() => {
+    setDisplayedText("");
+    index.current = 0;
+    const timer = setInterval(() => {
+      if (index.current < text.length) {
+        setDisplayedText((prev) => prev + text.charAt(index.current));
+        index.current++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 30);
+    return () => clearInterval(timer);
+  }, [text]);
+
+  return (
+    <div className="relative overflow-hidden bg-black p-8 font-mono text-[#33ff33] min-h-[200px] border-2 border-green-900 shadow-[0_0_15px_rgba(34,197,94,0.2)] my-8">
+      <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_2px,3px_100%]" />
+      <pre className="relative z-20 whitespace-pre-wrap [text-shadow:0_0_8px_rgba(51,255,51,0.8)]">
+        {displayedText}
+        <span className="inline-block w-3 h-5 bg-[#33ff33] animate-pulse ml-1 align-middle" />
+      </pre>
+    </div>
+  );
+};
 
 export default function BlogPage() {
   return (
@@ -59,6 +90,8 @@ export default function BlogPage() {
                     The <a href="https://line-mode.cern.ch/www/hypertext/WWW/TheProject.html" target="_blank" rel="noreferrer" className="text-emerald-400 decoration-emerald-500/50 underline underline-offset-8 hover:text-white transition-all">CERN Line Mode Browser</a> was the
                     minimum viable product that changed the trajectory of human information exchange.
                   </p>
+
+                  <RetroTerminal text="Welcome to the CERN Line Mode Browser simulation. This is how the web began: simple, textual, and revolutionary." />
 
                   {/* Component Integration */}
                   <div className="py-4">
