@@ -10,7 +10,7 @@ export const siteConfig = {
     },
     {
       label: "Docs",
-      href: "https://portal.mymexp.com",
+      href: "/docs",
     },
     {
       label: "Portfolio",

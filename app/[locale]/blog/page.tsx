@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import EngineeringDataViz from '@/components/EngineeringDataViz';
+import { PageWrapper } from '@/components/PageWrapper';
 
 const RetroTerminal = ({ text }: { text: string }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -66,11 +67,9 @@ const RetroTerminal = ({ text }: { text: string }) => {
   );
 };
 
-
 export default function BlogPage() {
   return (
-    /* 1. Breaking out of parent containers using negative margins and w-screen */
-    <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen min-h-screen bg-[#030712] text-slate-300 font-mono selection:bg-emerald-500/30 overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#030712] text-slate-300 font-mono selection:bg-emerald-500/30 overflow-x-hidden">
 
       {/* 2. Fixed Grid - This ensures the background stays consistent while scrolling */}
       <div className="fixed inset-0 z-0 opacity-[0.05] pointer-events-none"
@@ -80,7 +79,7 @@ export default function BlogPage() {
         }}>
       </div>
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-12 md:px-16">
+      <PageWrapper className="relative z-10 max-w-[1400px] md:px-16 pb-12">
 
         {/* Top Navigation Bar */}
         <header className="flex items-center justify-between border-b border-white/5 pb-8 mb-16 w-full">
@@ -195,7 +194,7 @@ export default function BlogPage() {
             &lt;/&gt; Built for Structural Integrity // 2024
           </div>
         </footer>
-      </div>
+      </PageWrapper>
     </div>
   );
 }

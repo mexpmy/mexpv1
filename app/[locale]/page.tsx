@@ -12,7 +12,7 @@ export default function Home() {
   const t = useTranslations('Index');
 
   return (
-    <main className="min-h-screen relative">
+    <main className="min-h-screen relative pt-16 px-6">
       {/* Full-screen 3D Earth background */}
       <EarthBackground />
 

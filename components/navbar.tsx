@@ -27,7 +27,11 @@ import {
   SearchIcon,
 } from "@/components/icons";
 
+import { usePathname } from "@/i18n/routing";
+
 export const Navbar = () => {
+  const pathname = usePathname();
+
   const searchInput = (
     <Input
       aria-label="Search"

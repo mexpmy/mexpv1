@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import "@/styles/globals.css";
 import { Metadata } from "next";
 import Script from "next/script";
+// Loader2 is imported here as layout.tsx is now a Server Component.
 
 // 1. Move this here (outside the function)
 export const dynamic = 'force-dynamic';
@@ -33,20 +34,18 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4548223576832848"
-          crossOrigin="anonymous"></script>}
         <Script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4548223576832848"
           crossOrigin="anonymous"
-          strategy="afterInteractive" // Loads after the page becomes interactive
+          strategy="afterInteractive"
         />
       </head>
       <body className="min-h-screen font-sans antialiased bg-transparent">
         <Providers messages={messages} locale={locale}>
           <div className="relative flex flex-col min-h-screen">
             <Navbar />
-            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+            <main className="flex-grow">
               {children}
             </main>
           </div>

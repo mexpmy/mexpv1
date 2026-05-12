@@ -1,0 +1,7 @@
+allowBuilds:
+  '@heroui/shared-utils': false
+  '@parcel/watcher': false
+  '@swc/core': false
+  '@tailwindcss/oxide': false
+  sharp: false
+  unrs-resolver: false

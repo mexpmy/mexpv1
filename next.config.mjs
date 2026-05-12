@@ -7,7 +7,7 @@ const nextConfig = {
   output: 'standalone',
   typescript: {
     // !! WARN !!
-    // Dangerously allow production builds to successfully complete 
+    // Dangerously allow production builds to successfully complete
     // even if your project has type errors.
     // !! WARN !!
     ignoreBuildErrors: true,
@@ -17,6 +17,9 @@ const nextConfig = {
     'landscape.mymexp.com',
     'mymexp.com',
   ],
+  turbopack: {
+    root: import.meta.dirname,
+  },
 };
 
 // DELETE the module.exports line that was here

@@ -1,189 +1,254 @@
 "use client";
 
-import React, { Suspense, Component, ReactNode } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Grid, Float } from "@react-three/drei";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { Chip } from "@heroui/chip";
+import { Image } from "@heroui/image";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-// ─── FIX 1: Error Boundary for WebGL crashes ─────────────────────────────────
-interface ErrorBoundaryState { hasError: boolean }
-class SceneErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, ErrorBoundaryState> {
-  constructor(props: { children: ReactNode; fallback: ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError() { return { hasError: true }; }
-  componentDidCatch(error: Error) { console.error("[Scene] WebGL error:", error); }
-  render() {
-    return this.state.hasError ? this.props.fallback : this.props.children;
-  }
+// Utility for tailwind classes
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
 
-// ─── FIX 2: WebGL capability check ───────────────────────────────────────────
-function isWebGLSupported(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const canvas = document.createElement("canvas");
-    return !!(
-      window.WebGLRenderingContext &&
-      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
-    );
-  } catch {
-    return false;
+const projects = [
+  {
+    id: "01",
+    title: "Meridian Health",
+    category: "Healthcare / Workflow Design",
+    year: "Mar 19, 2026",
+    tags: ["Product", "Design System", "Development"],
+    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=2070",
+    color: "bg-[#F2F2F2]",
+    textColor: "text-black"
+  },
+  {
+    id: "02",
+    title: "StyleBook",
+    category: "SaaS / Transformation",
+    year: "Mar 2, 2026",
+    tags: ["AI", "Mobile App", "Brand"],
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2070",
+    color: "bg-[#EBEBEB]",
+    textColor: "text-black"
+  },
+  {
+    id: "03",
+    title: "Homestead",
+    category: "Proptech / 0 -> 1",
+    year: "Jan 2, 2025",
+    tags: ["Real Estate", "Web App", "UI/UX"],
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1973",
+    color: "bg-[#E0E0E0]",
+    textColor: "text-black"
+  },
+  {
+    id: "04",
+    title: "North Light",
+    category: "Strategy / Enterprise",
+    year: "Dec 15, 2024",
+    tags: ["Consulting", "Enterprise", "Strategy"],
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2070",
+    color: "bg-[#D6D6D6]",
+    textColor: "text-black"
   }
-}
+];
 
-// ─── FIX 3: Static fallback when WebGL is unavailable ────────────────────────
-function StaticFallbackBackground() {
+const ProjectCard = ({ 
+  project, 
+  index, 
+  progress, 
+  targetScale 
+}: { 
+  project: typeof projects[0], 
+  index: number, 
+  progress: MotionValue<number>,
+  targetScale: number
+}) => {
+  const container = useRef(null);
+  
+  // Each card starts scaling down only after its "active" period
+  // Active period for card i is roughly [i/total, (i+1)/total]
+  const start = (index + 1) * (1 / projects.length);
+  const scale = useTransform(progress, [start, 1], [1, targetScale]);
+
   return (
-    <div
-      className="fixed inset-0 z-0"
-      style={{
-        background: "#0a0a0a",
-        backgroundImage:
-          "linear-gradient(rgba(51,51,51,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(51,51,51,0.4) 1px, transparent 1px)",
-        backgroundSize: "60px 60px",
-      }}
-    />
+    <div ref={container} className="h-screen flex items-center justify-center sticky top-0">
+      <motion.div 
+        style={{ 
+          scale,
+          top: `calc(5vh + ${index * 40}px)` // Visible "tabs" effect
+        }} 
+        className={cn(
+          "relative h-[75vh] w-full max-w-7xl mx-auto rounded-[40px] overflow-hidden shadow-2xl flex flex-col md:flex-row",
+          project.color,
+          project.textColor
+        )}
+      >
+        <div className="flex-1 p-8 md:p-12 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start mb-8">
+              <span className="font-mono text-sm opacity-50 uppercase tracking-widest">{project.id} / Selected Works</span>
+              <span className="font-mono text-sm opacity-50">{project.year}</span>
+            </div>
+            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">{project.title}</h2>
+            <p className="text-lg md:text-xl opacity-70 mb-8 max-w-md">{project.category}</p>
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map(tag => (
+                <Chip key={tag} variant="flat" size="sm" className="bg-black/5 border-none font-medium">
+                  {tag}
+                </Chip>
+              ))}
+            </div>
+          </div>
+          
+          <button className="w-fit px-8 py-4 bg-black text-white rounded-full font-bold uppercase tracking-widest text-[10px] hover:scale-105 transition-transform active:scale-95">
+            View Project
+          </button>
+        </div>
+        
+        <div className="flex-1 relative overflow-hidden h-1/2 md:h-full group">
+          <Image
+            removeWrapper
+            alt={project.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            src={project.image}
+          />
+        </div>
+      </motion.div>
+    </div>
   );
-}
+};
 
 export default function AboutPage() {
-  // ─── FIX 2: Capability check runs client-side only ───────────────────────
-  const [webGLAvailable, setWebGLAvailable] = React.useState<boolean | null>(null);
-
-  React.useEffect(() => {
-    setWebGLAvailable(isWebGLSupported());
-  }, []);
-
-  // Contact handler (FIX 4)
-  const handleContact = () => {
-    window.location.href = "mailto:dev@example.com"; // replace with your actual contact route
-  };
+  const container = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ['start start', 'end end']
+  });
 
   return (
-    <main className="relative min-h-screen w-full bg-[#0a0a0a] text-white">
-      {/* 1. BACKGROUND 3D LAYER */}
-      <div className="fixed inset-0 z-0">
-        {/* Show static grid while capability check runs (SSR / hydration) */}
-        {webGLAvailable === null && <StaticFallbackBackground />}
-
-        {/* FIX 1+2+3: Error boundary + WebGL guard + static fallback */}
-        {webGLAvailable === true && (
-          <SceneErrorBoundary fallback={<StaticFallbackBackground />}>
-            <Scene />
-          </SceneErrorBoundary>
-        )}
-
-        {webGLAvailable === false && <StaticFallbackBackground />}
-      </div>
-
-      {/* 2. FOREGROUND CONTENT LAYER */}
-      <div className="relative z-10 flex flex-col items-start justify-center min-h-screen px-6 md:px-24 py-20 pointer-events-none">
-        <header className="space-y-2 mb-12">
-          <h1 className="text-7xl md:text-9xl font-black tracking-tighter leading-none">
-            SYSTEM<br />OVERVIEW
-          </h1>
-          <div className="flex gap-4 font-mono text-sm text-zinc-500">
-            <span>ID: DEV_UNIT_88</span>
-            <span>//</span>
-            <span>LOC: JOHOR_MY</span>
+    <main className="bg-white text-black">
+      {/* Hero Section */}
+      <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24">
+        {/* "Hey there" staggered greeting — Nudge Folio style */}
+        <div className="mb-10 overflow-hidden">
+          <motion.p
+            className="font-mono text-sm uppercase tracking-[0.3em] text-zinc-400 mb-6"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            Creative Portfolio 2026
+          </motion.p>
+          <div className="flex flex-wrap gap-x-[0.05em] overflow-hidden">
+            {"hey, there.".split("").map((char, i) => (
+              <motion.span
+                key={i}
+                className="inline-block text-[13vw] md:text-[10vw] font-bold tracking-tighter leading-none text-black"
+                initial={{ y: "110%", opacity: 0 }}
+                animate={{ y: "0%", opacity: 1 }}
+                transition={{
+                  duration: 0.65,
+                  ease: [0.22, 1, 0.36, 1],
+                  delay: 0.05 + i * 0.04,
+                }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))}
           </div>
-          <div className="flex gap-2 mt-4">
-            <span className="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold">
-              [ STATUS: OPTIMIZED ]
-            </span>
-            <span className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
-              [ TEMP: NOMINAL ]
-            </span>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl pointer-events-auto">
-          {/* Card 01 */}
-          <div className="p-8 bg-zinc-900/50 border border-zinc-800 backdrop-blur-md rounded-xl">
-            <h3 className="text-blue-500 font-mono mb-4 text-xs tracking-widest uppercase">01_CORE_BIOGRAPHY</h3>
-            <p className="text-zinc-300 leading-relaxed">
-              Originally trained in the world of{" "}
-              <span className="text-white font-semibold italic">Mechanical Engineering</span>,
-              I now apply the laws of physics and structural integrity to the digital realm.
-              I build web engines that aren&apos;t just fast—they&apos;re architecturally sound.
-            </p>
-          </div>
-
-          {/* Card 02 */}
-          <div className="p-8 bg-zinc-900/50 border border-zinc-800 backdrop-blur-md rounded-xl">
-            <h3 className="text-blue-500 font-mono mb-4 text-xs tracking-widest uppercase">02_TECH_SPECS</h3>
-            <ul className="space-y-2 font-mono text-sm text-zinc-400">
-              <li className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" /> Next.js 14 / TypeScript
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" /> Three.js / R3F
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" /> Tailwind / HeroUI
-              </li>
-            </ul>
-            {/* FIX 4: Wired up contact button */}
-            <button
-              onClick={handleContact}
-              className="mt-8 w-full py-3 bg-white text-black font-bold uppercase tracking-widest text-xs hover:bg-blue-500 hover:text-white transition-colors"
-            >
-              [ INITIALIZE CONTACT ]
-            </button>
-          </div>
+          <motion.p
+            className="mt-4 text-zinc-400 font-mono text-sm tracking-widest uppercase"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+          >
+            I&apos;m Syahmi — Engineer &amp; Builder
+          </motion.p>
         </div>
-      </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.85, ease: "easeOut" }}
+          className="max-w-4xl"
+        >
+          <p className="text-3xl md:text-5xl font-medium tracking-tight leading-[1.1] text-zinc-900">
+            A specialized digital laboratory where engineering precision meets creative exploration. Architecting high-performance web experiences.
+          </p>
+          
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 font-mono text-[10px] uppercase tracking-widest text-zinc-400">
+            <div>
+              <p className="text-black font-black mb-3 italic">Location</p>
+              <p>Johor, MY</p>
+            </div>
+            <div>
+              <p className="text-black font-black mb-3 italic">Focus</p>
+              <p>Full-Stack / AI</p>
+            </div>
+            <div>
+              <p className="text-black font-black mb-3 italic">Current Status</p>
+              <p>Available for Hire</p>
+            </div>
+            <div>
+              <p className="text-black font-black mb-3 italic">Contact</p>
+              <p>syahmi@mexp.dev</p>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Featured Works Section */}
+      <section ref={container} className="relative px-6 md:px-12 lg:px-24">
+        <div className="flex justify-between items-end mb-24">
+          <div>
+            <span className="font-mono text-xs uppercase tracking-[0.3em] text-zinc-400 mb-4 block">Portfolio</span>
+            <h2 className="text-5xl md:text-8xl font-bold tracking-tighter">FEATURED WORKS</h2>
+          </div>
+          <p className="font-mono text-xs text-zinc-400 hidden md:block italic tracking-widest">↓ SCROLL TO EXPLORE</p>
+        </div>
+        
+        <div className="relative">
+          {projects.map((project, i) => {
+            const targetScale = 1 - ( (projects.length - i) * 0.05);
+            return (
+              <ProjectCard 
+                key={project.id} 
+                index={i} 
+                project={project} 
+                progress={scrollYProgress} 
+                targetScale={targetScale}
+              />
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Footer / Contact Section */}
+      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <span className="font-mono text-sm uppercase tracking-[0.3em] text-zinc-400 mb-8 block">Start a conversation</span>
+          <h2 className="text-7xl md:text-[12vw] font-bold tracking-tighter leading-[0.8] mb-16">
+            LET&apos;S CREATE<br />THE FUTURE
+          </h2>
+          <a 
+            href="mailto:syahmi@mexp.dev" 
+            className="group relative inline-block text-2xl md:text-5xl font-medium"
+          >
+            <span>syahmi@mexp.dev</span>
+            <div className="absolute -bottom-2 left-0 w-0 h-1 bg-black transition-all duration-500 group-hover:w-full" />
+          </a>
+        </motion.div>
+      </section>
+      
+      {/* Scroll indicator for the works section */}
+      <div className="h-[20vh]" /> 
     </main>
-  );
-}
-
-function Scene() {
-  return (
-    <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-      <color attach="background" args={["#0a0a0a"]} />
-      <ambientLight intensity={1} />
-      <pointLight position={[10, 10, 10]} intensity={1.5} />
-
-      <Suspense fallback={null}>
-        {/*
-          FIX 5: Float removed from around OrbitControls target mesh.
-          Float's continuous transform and OrbitControls' user-input transform
-          fight each other causing jitter. Float is kept but isolated so
-          OrbitControls targets a stable parent mesh, not the animated Float child.
-        */}
-        <mesh position={[1.5, 0, 0]} rotation={[0, Math.PI / 4, 0]}>
-          <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-            <torusKnotGeometry args={[1.2, 0.4, 128, 16]} />
-            <meshStandardMaterial
-              color="#3b82f6"
-              wireframe
-              transparent
-              opacity={0.3}
-            />
-          </Float>
-        </mesh>
-
-        {/* FIX 6: Increased cell contrast for visibility across display profiles */}
-        <Grid
-          renderOrder={-1}
-          position={[0, -1.5, 0]}
-          args={[10.5, 10.5]}
-          sectionSize={1}
-          sectionThickness={1.5}
-          sectionColor="#444"   // was #333
-          cellColor="#1e1e1e"   // was #111 — still subtle but readable on dim displays
-          fadeDistance={25}
-        />
-      </Suspense>
-
-      {/* FIX 5: autoRotate keeps the model moving after user interaction ends */}
-      <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        autoRotate
-        autoRotateSpeed={0.6}
-      />
-    </Canvas>
   );
 }
