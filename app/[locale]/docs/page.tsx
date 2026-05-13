@@ -13,27 +13,72 @@ const appDetails: Record<string, { name: string; version: string; status: string
 };
 
 export default function DocsPage() {
+  const [entered, setEntered] = useState(false);
+  const [entering, setEntering] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [selectedApp, setSelectedApp] = useState<string | null>(null);
 
   useEffect(() => setMounted(true), []);
 
+  const handleEnter = () => {
+    setEntering(true);
+    setTimeout(() => { setEntered(true); setEntering(false); }, 800);
+  };
+
   const app = selectedApp ? appDetails[selectedApp] : null;
   if (!mounted) return null;
 
   return (
-    <div className="relative h-[calc(100vh-64px)] bg-zinc-950 overflow-hidden flex flex-col items-center justify-center">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[500px] h-[500px] rounded-full opacity-10" style={{ background: "radial-gradient(circle, #38bdf8 0%, transparent 70%)" }} />
-      </div>
+    <div className="relative w-full h-full bg-zinc-950 overflow-hidden">
 
-      <motion.div className="z-10 flex flex-col items-center gap-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-        <h1 className="text-zinc-600 font-black tracking-[0.3em] uppercase text-sm">Nexus Command</h1>
-        <RadialMenu onSelect={(id) => setSelectedApp(id)} />
-        <p className="text-zinc-700 text-xs tracking-widest uppercase font-medium">Select a system to explore</p>
-      </motion.div>
+      {/* Entry Screen */}
+      <AnimatePresence>
+        {!entered && (
+          <motion.div key="entry" className="absolute inset-0 z-50 flex flex-col items-center justify-center cursor-pointer select-none" exit={{ opacity: 0 }} transition={{ duration: 0.5 }} onClick={handleEnter}>
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-[500px] h-[500px] rounded-full opacity-10" style={{ background: "radial-gradient(circle, #38bdf8 0%, transparent 70%)" }} />
+            </div>
+            <motion.div className="relative z-10 text-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.3 }}>
+              <div className="text-zinc-500 text-[10px] tracking-[0.6em] uppercase font-black mb-8">MExp Ecosystem</div>
+              <h1 className="text-[clamp(3rem,10vw,8rem)] font-black leading-[0.85] tracking-tighter mb-8">
+                <span className="block text-white">NEXUS</span>
+                <span className="block text-zinc-700">COMMAND</span>
+              </h1>
+              <div className="w-px h-12 bg-zinc-800 mx-auto mb-6" />
+              <motion.div className="text-xs tracking-[0.5em] uppercase text-zinc-600 font-medium" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 2 }}>
+                Click to Enter
+              </motion.div>
+            </motion.div>
+            <div className="absolute bottom-8 left-8 text-zinc-800 text-[10px] font-mono tracking-widest">NEXUS · v1.0</div>
+            <div className="absolute bottom-8 right-8 text-zinc-800 text-[10px] font-mono tracking-widest">5 SYSTEMS ONLINE</div>
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-700 text-[10px] font-mono tracking-widest">Powered by MEXP · 2026</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
+      {/* Flash */}
+      <AnimatePresence>
+        {entering && (<motion.div key="flash" className="absolute inset-0 z-40 bg-zinc-800" initial={{ opacity: 0 }} animate={{ opacity: [0, 0.6, 0] }} transition={{ duration: 0.6, times: [0, 0.3, 1] }} />)}
+      </AnimatePresence>
+
+      {/* Main */}
+      {entered && (
+        <motion.div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-[500px] h-[500px] rounded-full opacity-5" style={{ background: "radial-gradient(circle, #38bdf8 0%, transparent 70%)" }} />
+          </div>
+          <motion.div className="z-10 flex flex-col items-center gap-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
+            <h1 className="text-zinc-600 font-black tracking-[0.3em] uppercase text-sm">Nexus Command</h1>
+            <RadialMenu onSelect={(id) => setSelectedApp(id)} />
+            <p className="text-zinc-700 text-xs tracking-widest uppercase font-medium">Select a system to explore</p>
+          </motion.div>
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-700 text-[10px] font-mono tracking-widest">Powered by MEXP · 2026</div>
+        </motion.div>
+      )}
+
+      {/* Modal */}
       <AnimatePresence>
         {app && (
           <>
