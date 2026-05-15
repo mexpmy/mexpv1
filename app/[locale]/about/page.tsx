@@ -143,7 +143,7 @@ export default function AboutPage() {
             Creative Portfolio 2026
           </motion.p>
           <div className="flex flex-wrap gap-x-[0.05em] overflow-hidden">
-            {"hey, there.".split("").map((char, i) => (
+            {"assalamualaikum, & hi!.".split("").map((char, i) => (
               <motion.span
                 key={i}
                 className="inline-block text-[13vw] md:text-[10vw] font-bold tracking-tighter leading-none text-black"
@@ -194,7 +194,7 @@ export default function AboutPage() {
             </div>
             <div>
               <p className="text-black font-black mb-3 italic">Contact</p>
-              <p>syahmi@mexp.dev</p>
+              <p>syahmi@mymexp.com</p>
             </div>
           </div>
         </motion.div>
@@ -241,7 +241,7 @@ export default function AboutPage() {
             href="mailto:syahmi@mexp.dev" 
             className="group relative inline-block text-2xl md:text-5xl font-medium"
           >
-            <span>syahmi@mexp.dev</span>
+            <span>syahmi@mymexp.com</span>
             <div className="absolute -bottom-2 left-0 w-0 h-1 bg-black transition-all duration-500 group-hover:w-full" />
           </a>
         </motion.div>

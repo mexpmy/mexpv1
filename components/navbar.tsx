@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -31,6 +32,8 @@ import { usePathname } from "@/i18n/routing";
 
 export const Navbar = () => {
   const pathname = usePathname();
+  // 1. Controlled state for the mobile menu
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const searchInput = (
     <Input
@@ -54,12 +57,22 @@ export const Navbar = () => {
   );
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar 
+      maxWidth="xl" 
+      position="sticky"
+      // 2. Bind the state to HeroUINavbar
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-2" href="/">
+          <NextLink 
+            className="flex justify-start items-center gap-2" 
+            href="/"
+            onClick={() => setIsMenuOpen(false)} // Close when clicking logo
+          >
             <p className="font-bold text-inherit font-mono">MEXP</p>
-</NextLink>
+          </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
@@ -121,21 +134,31 @@ export const Navbar = () => {
 
       <NavbarMenu>
         {searchInput}
-        <div className="mx-4 mt-2 flex flex-col gap-2">
+        <div className="mx-4 mt-2 flex flex-col gap-4">
           {siteConfig.navItems.map((item, index) => (
             <NavbarMenuItem key={`${item.label}-${index}`}>
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "text-lg",
+                  "text-lg w-full py-2",
                 )}
                 color="foreground"
                 href={item.href}
+                // 3. Close the menu on link click
+                onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}
               </NextLink>
             </NavbarMenuItem>
           ))}
+          
+          {/* 4. Language Switcher section for Mobile */}
+          <div className="flex flex-col gap-2 pt-4 border-t border-default-100">
+             <div className="flex items-center justify-between px-1">
+                <span className="text-default-500 text-sm">Language</span>
+                <LanguageSwitcher />
+             </div>
+          </div>
         </div>
       </NavbarMenu>
     </HeroUINavbar>

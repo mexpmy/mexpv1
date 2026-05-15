@@ -16,7 +16,7 @@ const items: Item[] = [
   { id: "home", label: "Home", icon: <FaHome />, href: "/" },
   { id: "about", label: "About", icon: <FaUser />, href: "/about" },
   { id: "portfolio", label: "Portfolio", icon: <FaBriefcase />, href: "/portfolio" },
-  { id: "blogs", label: "Blogs", icon: <FaNewspaper />, href: "https://mexp.hashnode.dev", external: true },
+  { id: "blogs", label: "Blogs", icon: <FaNewspaper />, href: "/blog"},
   { id: "contact", label: "Contact", icon: <FaEnvelopeOpen />, href: "/contact" },
 ];
 
