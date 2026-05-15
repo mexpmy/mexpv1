@@ -1,117 +1,69 @@
 "use client";
 
-import { ScrollShadow } from "@heroui/react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import React from "react";
+import { Button } from "@heroui/button";
+import { Drawer, DrawerContent, DrawerBody, useDisclosure } from "@heroui/react";
+// You can import a Menu icon from your icons folder or use a simple SVG
+const MenuIcon = () => (
+  <svg fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
+    <line x1="3" x2="21" y1="12" y2="12" /><line x1="3" x2="21" y1="6" y2="6" /><line x1="3" x2="21" y1="18" y2="18" />
+  </svg>
+);
 
-// ─── Navigation tree ──────────────────────────────────────────────
-interface NavItem {
-  label: string;
-  href: string;
-  icon: string; // Tabler icon name, e.g. "home"
-}
+export default function DocsLayout({ children }: { children: React.ReactNode }) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-interface NavGroup {
-  heading: string;
-  items: NavItem[];
-}
-
-const NAV: NavGroup[] = [
-  {
-    heading: "Getting started",
-    items: [
-      { label: "Introduction", href: "/docs", icon: "home" },
-      { label: "Installation", href: "/docs/installation", icon: "download" },
-      { label: "Configuration", href: "/docs/configuration", icon: "settings" },
-    ],
-  },
-  {
-    heading: "Components",
-    items: [
-      { label: "Layout", href: "/docs/components/layout", icon: "layout" },
-      { label: "Navbar", href: "/docs/components/navbar", icon: "layout-navbar" },
-      { label: "Theming", href: "/docs/components/theming", icon: "palette" },
-    ],
-  },
-  {
-    heading: "Guides",
-    items: [
-      { label: "Deployment", href: "/docs/guides/deployment", icon: "rocket" },
-      { label: "API routes", href: "/docs/guides/api-routes", icon: "code" },
-    ],
-  },
-];
-
-// ─── Sidebar item ─────────────────────────────────────────────────
-function SidebarItem({ item }: { item: NavItem }) {
-  const pathname = usePathname();
-  const isActive =
-    item.href === "/docs"
-      ? pathname === "/docs"
-      : pathname.startsWith(item.href);
-
-  return (
-    <Link
-      href={item.href}
-      className={`
-        flex items-center gap-2 px-3 py-[7px] rounded-lg text-sm transition-all duration-150
-        ${isActive
-          ? "bg-default-100 text-foreground font-medium border border-default-200"
-          : "text-default-500 hover:bg-default-50 hover:text-foreground"
-        }
-      `}
-    >
-      <i className={`ti ti-${item.icon} text-[15px]`} aria-hidden="true" />
-      {item.label}
-    </Link>
+  // Create a reusable component for your links to keep it clean
+  const SidebarLinks = () => (
+    <div className="flex flex-col gap-4 p-4">
+      <p className="font-bold text-xs uppercase text-default-400 tracking-wider">Getting Started</p>
+      <nav className="flex flex-col gap-2">
+        <a href="/en/docs" className="text-default-600 hover:text-primary py-1">Introduction</a>
+        <a href="/en/docs/installation" className="text-default-600 hover:text-primary py-1">Installation</a>
+        <a href="/en/docs/configuration" className="text-default-600 hover:text-primary py-1">Configuration</a>
+      </nav>
+      {/* Add more sections as needed */}
+    </div>
   );
-}
 
-// ─── Sidebar ──────────────────────────────────────────────────────
-function DocsSidebar() {
   return (
-    <ScrollShadow
-      as="nav"
-      aria-label="Documentation navigation"
-      className="
-        sticky top-16 h-[calc(100vh-4rem)] w-56 flex-shrink-0
-        border-r border-divider bg-content1
-        flex flex-col gap-1 px-3 py-4 overflow-y-auto
-      "
-    >
-      {NAV.map((group) => (
-        <div key={group.heading} className="mb-1">
-          <p className="px-2 pb-1.5 pt-3 text-[10px] font-medium uppercase tracking-widest text-default-400 first:pt-1">
-            {group.heading}
-          </p>
-          {group.items.map((item) => (
-            <SidebarItem key={item.href} item={item} />
-          ))}
-        </div>
-      ))}
-    </ScrollShadow>
-  );
-}
+    <div className="relative flex flex-col lg:flex-row w-full max-w-7xl mx-auto">
+      
+      {/* 📱 MOBILE FLOATING BUTTON - Hidden on Desktop (lg:hidden) */}
+      <div className="lg:hidden fixed bottom-8 right-8 z-50">
+        <Button
+          isIconOnly
+          className="bg-primary text-white shadow-lg"
+          radius="full"
+          size="lg"
+          onPress={onOpen}
+        >
+          <MenuIcon />
+        </Button>
+      </div>
 
-// ─── Layout ───────────────────────────────────────────────────────
-export default function DocsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex min-h-screen">
-      <DocsSidebar />
-      <motion.main
-        key="docs-main"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
-        className="flex-1 px-8 py-10 max-w-3xl"
-      >
+      {/* 💻 DESKTOP SIDEBAR - Hidden on Mobile (hidden lg:block) */}
+      <aside className="hidden lg:block w-64 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto border-r border-default-100 pr-4">
+        <SidebarLinks />
+      </aside>
+
+      {/* 📱 MOBILE DRAWER - Only appears when button is clicked */}
+      <Drawer isOpen={isOpen} onOpenChange={onOpenChange} placement="left" size="xs">
+        <DrawerContent>
+          {(onClose) => (
+            <DrawerBody className="pt-10">
+              <div onClick={onClose}> {/* Closes drawer when a link is clicked */}
+                <SidebarLinks />
+              </div>
+            </DrawerBody>
+          )}
+        </DrawerContent>
+      </Drawer>
+
+      {/* 📄 MAIN CONTENT AREA */}
+      <main className="flex-grow px-4 pb-20 lg:px-10">
         {children}
-      </motion.main>
+      </main>
     </div>
   );
 }
