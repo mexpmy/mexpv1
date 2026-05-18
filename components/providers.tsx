@@ -9,6 +9,16 @@ import { useRouter } from 'next/navigation';
 export function Providers({ children, messages, locale }: any) {
   const router = useRouter();
 
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  const originalError = console.error;
+  console.error = (...args: any[]) => {
+    if (typeof args[0] === 'string' && args[0].includes('Encountered a script tag')) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+}
+
   return (
     <HeroUIProvider navigate={router.push} locale={locale}>
       <NextThemesProvider
@@ -22,4 +32,5 @@ export function Providers({ children, messages, locale }: any) {
       </NextThemesProvider>
     </HeroUIProvider>
   );
-}
+} 
+  

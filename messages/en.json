@@ -8,5 +8,11 @@
     "getStarted": "MExp Portal",
     "learnMore": "Digital Twin",
     "footer": "Built by <next>Syahmi</next> for <hero>MExp</hero>"
+  },
+  "Blog": {
+    "intro": "The first web page wasn't driven by aesthetic excess; it was built upon a vision of interconnectedness and the <bold>pursuit of shared knowledge</bold>. The <link>CERN Line Mode Browser</link> was a minimalist foundation that permanently changed the trajectory of human information exchange—proving that profound impact often begins with simple, well-mannered utility.",    "philosophy": "As a Mechanical Engineer transitioning into AI and Data Science, I view technology as more than just pure utility; I view it as an Amanah (a trust). I find profound beauty in systems built without excess—where structural integrity directly mirrors ethical integrity. My ethos is rooted in Itqan (the pursuit of excellence): building intelligent, data-driven systems that are as beneficial, respectful, and precise as a perfectly machined gear.",
+    "securityTitle": "[ ! ] SYSTEM VULNERABILITY LOGGED",
+    "securitySubtitle": "A Catalyst for Security-First AI",
+    "securityBody": "A recent compromise of my digital identity served as a profound moment of reflection rather than just a technical setback. It reinforced my conviction that true innovation must be grounded in protection and privacy. This event has purposefully realigned my career trajectory toward security-first AI and Machine Learning—dedicating my expertise to developing systems that safeguard digital integrity and respect human boundaries."
   }
 }

@@ -8,5 +8,12 @@
     "getStarted": "Bermula sekarang",
     "learnMore": "Ketahui lebih lanjut",
     "footer": "Dibina dengan <next>Next.js</next> & <hero>HeroUI</hero>"
+  },
+  "Blog": {
+    "intro": "Laman web pertama tidak didorong oleh keterlaluan estetik; ia dibina atas wawasan kesalinghubungan dan pencarian ilmu bersama. Pelayar Mod Baris CERN merupakan asas minimalis yang mengubah trajektori pertukaran maklumat manusia buat selamanya—membuktikan bahawa impak yang mendalam sering bermula dengan utiliti yang ringkas dan beradab.",
+    "philosophy": "Sebagai seorang Jurutera Mekanikal yang beralih ke bidang AI dan Sains Data, saya melihat teknologi bukan sekadar utiliti semata-mata; saya melihatnya sebagai satu Amanah. Saya menemui keindahan yang mendalam dalam sistem yang dibina tanpa keterlaluan—di mana integriti struktur mencerminkan integriti etika secara langsung. Etos saya berakar umbi daripada konsep Itqan (mengejar kecemerlangan): membina sistem dipacu data yang pintar, bermanfaat, dan setepat gear yang dimesin dengan sempurna.",
+    "securityTitle": "[ ! ] KERENTANAN SISTEM DIKESAN",
+    "securitySubtitle": "Pemangkin untuk AI Berteraskan Keselamatan",
+    "securityBody": "Pencerobohan identiti digital saya baru-baru ini telah menjadi satu titik muhasabah yang mendalam, bukan sekadar halangan teknikal. Ia menguatkan keyakinan saya bahawa inovasi sebenar mesti berlandaskan perlindungan dan privasi. Peristiwa ini telah menyusun semula trajektori kerjaya saya ke arah AI dan Pembelajaran Mesin berteraskan keselamatan—mengabdikan kepakaran saya untuk membangunkan sistem yang melindungi integriti digital dan menghormati sempadan manusia."
   }
 }
