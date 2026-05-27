@@ -4,6 +4,8 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Environment, Html, useGLTF, Preload } from "@react-three/drei";
 import { EffectComposer, SelectiveBloom } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
+import { Color } from "three";
+import type * as THREE from "three";
 import { useRef, Suspense, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -39,7 +41,7 @@ function RigModel({
         name.includes("radar") || name.includes("navigation")
       ) {
         if (child.material) {
-          child.material.emissive = new THREE.Color("#ff8800");
+          child.material.emissive = new Color("#ff8800");
           child.material.emissiveIntensity = 5;
         }
         bloomList.push(child);

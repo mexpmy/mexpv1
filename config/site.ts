@@ -68,6 +68,6 @@ export const siteConfig = {
     twitter: "https://x.com/SyahmiSaadon",
     docs: "https://heroui.com",
     instagram: "https://www.instagram.com/marineexpeditors/",
-    sponsor: "https://mymexp.hashnode.dev",
+    sponsor: "https://github.com/sponsors/mexpmy",
   },
 };

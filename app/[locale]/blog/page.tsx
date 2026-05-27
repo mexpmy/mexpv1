@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import EngineeringDataViz from '@/components/EngineeringDataViz';
 import { PageWrapper } from '@/components/PageWrapper';
 import LinkedInBadge from '@/components/linkedin-badge';
+import { supabase } from '@/lib/supabase';
 
 const RetroTerminal = ({ text }: { text: string }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -67,11 +68,31 @@ const RetroTerminal = ({ text }: { text: string }) => {
 
 export default function BlogPage() {
   const t = useTranslations('Blog');
+  const [posts, setPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    async function fetchPosts() {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching posts:", error);
+      } else if (data) {
+        setPosts(data);
+      }
+      setIsLoading(false);
+    }
+
+    fetchPosts();
+  }, []);
+  
   return (
     <div className="relative min-h-screen bg-zinc-50 text-zinc-800 font-mono selection:bg-emerald-500/20 dark:bg-zinc-950 dark:text-zinc-300 transition-colors duration-300 overflow-x-hidden">
 
-      {/* Grid Pattern Background - adjusts intensity based on mode */}
+      {/* Grid Pattern Background */}
       <div className="fixed inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)',
@@ -79,7 +100,7 @@ export default function BlogPage() {
         }}>
       </div>
 
-      <PageWrapper className="relative z-10 max-w-[1400px] md:px-16 pb-12">
+      <PageWrapper className="relative z-10 max-w-[1400px] md:px-16 pb-12 mx-auto">
 
         {/* Top Navigation Bar */}
         <header className="flex items-center justify-between border-b border-zinc-200 dark:border-white/5 pb-8 mb-16 w-full">
@@ -88,13 +109,13 @@ export default function BlogPage() {
             <span className="text-xs tracking-[0.4em] uppercase font-black text-zinc-900 dark:text-white italic">System.Status // Online</span>
           </div>
           <div suppressHydrationWarning className="hidden md:block text-[10px] text-zinc-400 dark:text-slate-500 tabular-nums tracking-[0.2em] uppercase">
-            Node_ID: {Math.random().toString(36).substring(7).toUpperCase()} // DATA_STREAM_ACTIVE
+            Node_ID: D5IXU // DATA_STREAM_ACTIVE
           </div>
         </header>
 
         <main className="grid grid-cols-1 xl:grid-cols-12 gap-12 xl:gap-20">
 
-          {/* Left Column: Post Content */}
+          {/* Left Column: Main Focused Content */}
           <div className="xl:col-span-8">
             <section className="space-y-12">
               <div className="space-y-6">
@@ -151,7 +172,7 @@ export default function BlogPage() {
             </section>
           </div>
 
-          {/* Right Column: Sidebar */}
+          {/* Right Column: Sidebar Terminal Stream */}
           <aside className="xl:col-span-4 space-y-10">
 
             {/* The Hack Card */}
@@ -171,10 +192,94 @@ export default function BlogPage() {
               </div>
             </div>
 
-            {/* LinkedIn Profile Badge (Dynamically switches light/dark) */}
+            {/* Live Database Stories Feed Panel */}
+<div className="p-6 border border-zinc-200 dark:border-white/5 rounded-2xl bg-white/[0.6] dark:bg-white/[0.02] backdrop-blur-xl transition-colors duration-300">
+  <h3 className="text-zinc-900 dark:text-white font-black mb-6 text-[11px] uppercase tracking-[0.3em] border-b border-zinc-200 dark:border-white/10 pb-4 italic">
+    Terminal_Stories_Feed.log
+  </h3>
+  
+  <div className="flex flex-col gap-6">
+    
+    {/* SYSTEM ROADMAP FEATURED THUMBNAIL (Fully adapts to Light/Dark themes) */}
+    <a 
+      href="/roadmap" 
+      className="group relative block overflow-hidden border border-emerald-500/30 bg-zinc-50 dark:bg-zinc-950 p-5 rounded-none transition-all duration-300 hover:border-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+    >
+      {/* Scanline Overlay matching theme intensity */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.15)_50%)] bg-[length:100%_4px] opacity-20 dark:opacity-40" />
+      
+      {/* Theme Adaptive Corner Accents */}
+      <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-emerald-500"></div>
+      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-emerald-500"></div>
+
+      <div className="relative z-10">
+        <div className="flex items-center justify-between text-[9px] font-mono tracking-[0.2em] text-emerald-600 dark:text-emerald-400/80 mb-2 uppercase">
+          <span>⚡ CRITICAL_PATCH_MATRIX</span>
+          <span className="animate-pulse text-emerald-600 dark:text-emerald-400 font-bold">● ACTIVE</span>
+        </div>
+        
+        <h4 className="text-sm font-black tracking-wide text-zinc-900 dark:text-white uppercase mb-1 [text-shadow:0_0_6px_rgba(16,185,129,0.2)] dark:[text-shadow:0_0_6px_rgba(51,255,51,0.3)]">
+          System Modernization Roadmap
+        </h4>
+        
+        <p className="text-[11px] font-mono leading-relaxed text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-300 transition-colors mb-3">
+          Interactive layout analysis, internationalization matrices, and localized SEO blueprints.
+        </p>
+        
+        <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-black tracking-widest uppercase flex items-center gap-1">
+          <span>[ EXECUTE_INSPECTION_READOUT ]</span>
+          <span className="transform translate-x-0 group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </div>
+    </a>
+
+    <div className="border-t border-dashed border-zinc-200 dark:border-white/5 my-1" />
+
+    {/* Database-Driven Dynamic Stories Logs */}
+    {isLoading ? (
+      <div className="text-emerald-600 dark:text-emerald-500 animate-pulse font-mono text-xs tracking-wider py-4">
+        &gt; INITIALIZING DATABANKS... FETCHING LOGS...
+      </div>
+    ) : posts.length > 0 ? (
+      posts.map((post) => (
+        <article 
+          key={post.id} 
+          className="border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/40 p-5 rounded-none relative group hover:border-emerald-500/50 transition-colors"
+        >
+          <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          
+          <div className="text-[10px] text-emerald-600 dark:text-emerald-500/70 mb-2 font-mono tracking-widest uppercase flex justify-between">
+            <span>NODE_ENTRY: #{post.id?.substring(0, 8) || '7B7E36AB'}</span>
+            <span>{post.created_at ? new Date(post.created_at).toLocaleDateString() : '5/27/2026'}</span>
+          </div>
+          
+          <h4 className="text-sm text-zinc-900 dark:text-zinc-100 font-bold mb-2 uppercase tracking-wide group-hover:text-emerald-600 dark:group-hover:text-emerald-500 transition-colors">
+            {post.title}
+          </h4>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2">
+            {post.excerpt || post.description || 'Testing out the new database connection! This is pulling live from the cloud.'}
+          </p>
+          
+          <a 
+            href={`/blog/${post.slug || post.id}`} 
+            className="inline-block text-[10px] text-emerald-600 dark:text-emerald-400 hover:underline uppercase tracking-widest font-black"
+          >
+            [ READ_FULL_REPORT ]
+          </a>
+        </article>
+      ))
+    ) : (
+      <div className="text-zinc-400 dark:text-zinc-600 font-mono text-xs italic py-4">
+        &gt; NO LOG ENTRIES FOUND IN DATABASE BUFFER.
+      </div>
+    )}
+  </div>
+</div>
+            {/* LinkedIn Profile Badge */}
             <LinkedInBadge />
 
-            {/* Research Progress */}
+            {/* Research Progress Data */}
             <div className="p-8 border border-zinc-200 dark:border-white/5 rounded-2xl bg-white/[0.6] dark:bg-white/[0.02] backdrop-blur-xl transition-colors duration-300">
               <h3 className="text-zinc-900 dark:text-white font-black mb-8 text-[11px] uppercase tracking-[0.3em] border-b border-zinc-200 dark:border-white/10 pb-4 italic">Active_Research.bin</h3>
               <ul className="space-y-8">
@@ -198,6 +303,7 @@ export default function BlogPage() {
           </aside>
         </main>
 
+        {/* Footer Accent */}
         <footer className="mt-32 pt-12 border-t border-zinc-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-60 hover:opacity-100 transition-opacity">
           <div className="flex gap-10 text-[10px] uppercase tracking-[0.4em] font-black text-zinc-600 dark:text-slate-300">
             <a href="#" className="hover:text-emerald-500 transition-colors">GitHub</a>
