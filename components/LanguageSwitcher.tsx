@@ -9,20 +9,28 @@ import {
   Avatar,
 } from "@heroui/react";
 import { usePathname, useRouter } from "@/i18n/routing";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const languages = [
-  { code: "en", label: "English", flag: "https://flagcdn.com/w40/gb.png" },
-  { code: "ms", label: "Bahasa Melayu", flag: "https://flagcdn.com/w40/my.png" },
-  { code: "zh", label: "中文", flag: "https://flagcdn.com/w40/cn.png" },
+  { code: "en", flag: "https://flagcdn.com/w40/gb.png" },
+  { code: "ms", flag: "https://flagcdn.com/w40/my.png" },
+  { code: "zh", flag: "https://flagcdn.com/w40/cn.png" },
 ];
 
 export default function LanguageSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const currentLocale = useLocale();
+  const t = useTranslations("Common");
 
   const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
+
+  const getLabel = (code: string) => {
+    if (code === "en") return t("english");
+    if (code === "ms") return t("malay");
+    if (code === "zh") return t("chinese");
+    return code;
+  };
 
   const handleLanguageChange = (newLocale: string) => {
     router.replace(pathname, { locale: newLocale });
@@ -33,7 +41,8 @@ export default function LanguageSwitcher() {
       <DropdownTrigger>
         <Button 
           variant="flat" 
-          color="primary"
+          color="primary" 
+          size="sm"
           startContent={
             <Avatar 
               src={activeLang.flag} 
@@ -48,7 +57,7 @@ export default function LanguageSwitcher() {
       </DropdownTrigger>
       
       <DropdownMenu 
-        aria-label="Select Language"
+        aria-label={t("language")}
         variant="faded"
         onAction={(key) => handleLanguageChange(key as string)}
       >
@@ -58,13 +67,13 @@ export default function LanguageSwitcher() {
             description={lang.code === currentLocale ? "Active" : ""}
             startContent={
               <Avatar 
-                alt={lang.label} 
+                alt={getLabel(lang.code)} 
                 className="w-6 h-6 text-tiny" 
                 src={lang.flag} 
               />
             }
           >
-            {lang.label}
+            {getLabel(lang.code)}
           </DropdownItem>
         ))}
       </DropdownMenu>

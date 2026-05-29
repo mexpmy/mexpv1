@@ -1,13 +1,31 @@
 {
+  "Common": {
+    "language": "Bahasa",
+    "english": "English",
+    "malay": "Bahasa Melayu",
+    "chinese": "中文",
+    "close": "Tutup",
+    "back": "Kembali",
+    "explore": "Teroka",
+    "viewArchive": "Lihat Arkib Penuh"
+  },
+  "Navbar": {
+    "home": "Utama",
+    "docs": "Dokumentasi",
+    "portfolio": "Portfolio",
+    "apps": "Aplikasi",
+    "blog": "Blog",
+    "about": "Tentang"
+  },
   "Index": {
     "title": "Analisis Teknologi"
   },
   "Hero": {
-    "mainTitle": "Bina produk <important>menarik</important> dengan pantas.",
-    "description": "Permulaan minimalis untuk melancarkan laman web dengan Next.js, Tailwind dan HeroUI — direka untuk kelajuan dan kejelasan.",
-    "getStarted": "Bermula sekarang",
-    "learnMore": "Ketahui lebih lanjut",
-    "footer": "Dibina dengan <next>Next.js</next> & <hero>HeroUI</hero>"
+    "mainTitle": "Bina untuk <important>MExp Construction</important>.",
+    "description": "Berkongsi ilmu",
+    "getStarted": "Portal MExp",
+    "learnMore": "Digital Twin",
+    "footer": "Dibina oleh <next>Syahmi</next> untuk <hero>MExp</hero>"
   },
   "Blog": {
     "intro": "Laman web pertama tidak didorong oleh keterlaluan estetik; ia dibina atas wawasan kesalinghubungan dan pencarian ilmu bersama. Pelayar Mod Baris CERN merupakan asas minimalis yang mengubah trajektori pertukaran maklumat manusia buat selamanya—membuktikan bahawa impak yang mendalam sering bermula dengan utiliti yang ringkas dan beradab.",
@@ -15,5 +33,16 @@
     "securityTitle": "KERENTANAN SISTEM DIKESAN",
     "securitySubtitle": "Pemangkin untuk AI Berteraskan Keselamatan",
     "securityBody": "Pencerobohan identiti digital saya baru-baru ini telah menjadi satu titik muhasabah yang mendalam, bukan sekadar halangan teknikal. Ia menguatkan keyakinan saya bahawa inovasi sebenar mesti berlandaskan perlindungan dan privasi. Peristiwa ini telah menyusun semula trajektori kerjaya saya ke arah AI dan Pembelajaran Mesin berteraskan keselamatan—mengabdikan kepakaran saya untuk membangunkan sistem yang melindungi integriti digital dan menghormati sempadan manusia."
+  },
+  "Portfolio": {
+    "title": "Lima Tonggak",
+    "subtitle": "Disiplin yang membentuk segala yang kami bina",
+    "selectPillar": "Pilih satu tonggak untuk diteroka"
+  },
+  "Apps": {
+    "nexus": "NEXUS COMMAND",
+    "selectSystem": "Pilih sistem untuk diteroka",
+    "initialize": "MULAKAN IMBASAN",
+    "return": "KEMBALI KE NEXUS"
   }
 }

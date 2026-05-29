@@ -45,8 +45,8 @@ export const Hero = () => {
           </Link>
 
           <Link
-            className={clsx(buttonStyles({ variant: "bordered", radius: "full" }), "w-full sm:w-auto px-10")}
-            href="https://portal.mymexp.com"
+            className={clsx(buttonStyles({ variant: "bordered", radius: "full" }), "w-full sm:w-auto px-10 text-white")}
+            href="/digital-twin"
           >
             {t('learnMore')}
           </Link>

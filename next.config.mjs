@@ -13,7 +13,9 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   allowedDevOrigins: [
+    '192.168.1.104',
     '192.168.1.105',
+    'localhost',
     'landscape.mymexp.com',
     'mymexp.com',
   ],

@@ -1,6 +1,8 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
+import { motion, AnimatePresence } from 'framer-motion';
 import EngineeringDataViz from '@/components/EngineeringDataViz';
 import { PageWrapper } from '@/components/PageWrapper';
 import LinkedInBadge from '@/components/linkedin-badge';
@@ -70,6 +72,43 @@ export default function BlogPage() {
   const t = useTranslations('Blog');
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRecommendedOpen, setIsRecommendedOpen] = useState(false);
+  const [hasTriggeredRecommended, setHasTriggeredRecommended] = useState(false);
+  const [showFloatingButton, setShowFloatingButton] = useState(false);
+  const [savedArticles, setSavedArticles] = useState<string[]>([]);
+
+  // Dynamic recommended articles from actual posts (with high-quality fallback)
+  const imagePool = [
+    "https://picsum.photos/id/1015/400/240",
+    "https://picsum.photos/id/160/400/240",
+    "https://picsum.photos/id/201/400/240",
+    "https://picsum.photos/id/29/400/240",
+    "https://picsum.photos/id/251/400/240",
+    "https://picsum.photos/id/180/400/240",
+  ];
+
+  const recommendedArticles = useMemo(() => {
+    if (posts.length > 0) {
+      const shuffled = [...posts].sort((a, b) => (a.id || "").localeCompare(b.id || "")).slice(0, 4);
+      return shuffled.map((post, index) => ({
+        id: post.id || String(index),
+        title: post.title || "Untitled Entry",
+        author: "Syahmi Saadon",
+        readTime: `${Math.max(6, Math.floor((post.excerpt?.length || 300) / 40))} min`,
+        image: imagePool[index % imagePool.length],
+        href: `/blog/${post.slug || post.id || ""}`,
+        postId: post.id,
+      }));
+    }
+
+    // Fallback
+    return [
+      { id: "fb1", title: "Building Reliable Digital Twins for Offshore Platforms", author: "Syahmi Saadon", readTime: "14 min", image: imagePool[0], href: "/roadmap", postId: null },
+      { id: "fb2", title: "The Architecture of Secure AI Agents in Industrial Systems", author: "Syahmi Saadon", readTime: "11 min", image: imagePool[1], href: "/blog", postId: null },
+      { id: "fb3", title: "From Mechanical Engineering to Data-Driven Systems", author: "Syahmi Saadon", readTime: "9 min", image: imagePool[2], href: "/portfolio", postId: null },
+      { id: "fb4", title: "Why Most Digital Transformation Projects Fail in Heavy Industry", author: "Syahmi Saadon", readTime: "16 min", image: imagePool[3], href: "/blog", postId: null },
+    ];
+  }, [posts]);
 
   useEffect(() => {
     async function fetchPosts() {
@@ -91,6 +130,55 @@ export default function BlogPage() {
 
     fetchPosts();
   }, []);
+
+  // Load saved articles from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('mexp_saved_articles');
+    if (saved) {
+      setSavedArticles(JSON.parse(saved));
+    }
+  }, []);
+
+  // Auto-trigger Recommended Articles modal at ~90% scroll depth (one time only)
+  // Also control floating button visibility starting at 40% scroll
+  useEffect(() => {
+    if (hasTriggeredRecommended) return;
+
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      const scrollPercent = ((scrollTop + windowHeight) / docHeight) * 100;
+
+      // Show floating button after 40% scroll (less intrusive)
+      if (scrollPercent > 40 && !showFloatingButton) {
+        setShowFloatingButton(true);
+      }
+
+      // Auto open modal at ~90% (once)
+      if (scrollPercent >= 88 && !hasTriggeredRecommended) {
+        setHasTriggeredRecommended(true);
+        // Small delay so user feels they've reached the end
+        setTimeout(() => {
+          setIsRecommendedOpen(true);
+        }, 650);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasTriggeredRecommended]);
+
+  // Toggle save for later (persists in localStorage)
+  const toggleSave = (articleId: string) => {
+    const newSaved = savedArticles.includes(articleId)
+      ? savedArticles.filter(id => id !== articleId)
+      : [...savedArticles, articleId];
+
+    setSavedArticles(newSaved);
+    localStorage.setItem('mexp_saved_articles', JSON.stringify(newSaved));
+  };
   
   return (
     <div className="relative min-h-screen bg-zinc-50 text-zinc-800 font-mono selection:bg-emerald-500/20 dark:bg-zinc-950 dark:text-zinc-300 transition-colors duration-300 overflow-x-hidden">
@@ -314,7 +402,131 @@ export default function BlogPage() {
             &lt;/&gt; Built for MExp by Syahmi Saadon 
           </div>
         </footer>
+
+        {/* Floating "Recommended" button - appears after 40% scroll for better UX */}
+        {showFloatingButton && (
+          <button
+            onClick={() => setIsRecommendedOpen(true)}
+            className="fixed bottom-8 right-8 z-[60] flex items-center gap-2 px-5 py-2.5 rounded-full bg-zinc-950/90 backdrop-blur-xl border border-emerald-500/30 text-emerald-400 text-xs font-mono tracking-[1.5px] uppercase hover:bg-zinc-900 hover:border-emerald-400/60 hover:text-emerald-300 transition-all active:scale-[0.985] shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
+            aria-label="Open recommended articles"
+          >
+            <span className="text-base leading-none">★</span>
+            <span>RECOMMENDED</span>
+          </button>
+        )}
       </PageWrapper>
+
+      {/* Beautiful Recommended Articles Modal - Towards Data Science style */}
+      <Modal
+        isOpen={isRecommendedOpen}
+        onOpenChange={(open) => setIsRecommendedOpen(open)}
+        size="2xl"
+        classNames={{
+          base: "bg-zinc-950 text-white border border-white/10",
+          header: "border-b border-white/10",
+          body: "py-6",
+          footer: "border-t border-white/10",
+        }}
+        motionProps={{
+          variants: {
+            enter: { y: 0, opacity: 1, scale: 1, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } },
+            exit: { y: 30, opacity: 0, scale: 0.985, transition: { duration: 0.2, ease: [0.32, 0, 0.67, 1] } },
+          },
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 px-8 pt-8">
+                <div className="flex items-center gap-3">
+                  <div className="h-px w-8 bg-gradient-to-r from-emerald-400 to-transparent" />
+                  <span className="text-emerald-400 text-xs tracking-[3px] font-mono uppercase">END OF TRANSMISSION</span>
+                </div>
+                <h3 className="text-3xl font-semibold tracking-tight mt-1">Thanks for reading.</h3>
+                <p className="text-sm text-zinc-400 mt-1 max-w-md">
+                  If this exploration resonated, here are a few other pieces from the archive that continue the conversation.
+                </p>
+              </ModalHeader>
+
+              <ModalBody className="px-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  {recommendedArticles.map((article, index) => (
+                    <motion.a
+                      key={article.id}
+                      href={article.href}
+                      onClick={onClose}
+                      className="group block overflow-hidden rounded-xl border border-white/10 bg-zinc-900/60 hover:bg-zinc-900 hover:border-emerald-500/30 transition-all duration-300"
+                      whileHover={{ y: -2 }}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 * index }}
+                    >
+                      <div className="relative">
+                        <img 
+                          src={article.image} 
+                          alt={article.title}
+                          className="w-full h-[138px] object-cover transition-transform duration-500 group-hover:scale-[1.04]" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70" />
+                        <div className="absolute bottom-3 right-3 text-[10px] px-2.5 py-0.5 rounded bg-black/70 text-cyan-400 font-mono tracking-widest">
+                          {article.readTime}
+                        </div>
+                      </div>
+
+                      <div className="p-4">
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className="font-semibold text-[15px] leading-tight tracking-tight group-hover:text-cyan-300 transition-colors line-clamp-2 flex-1">
+                            {article.title}
+                          </h4>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleSave(article.id);
+                            }}
+                            className="mt-0.5 text-lg leading-none text-zinc-600 hover:text-emerald-400 transition-colors"
+                            aria-label={savedArticles.includes(article.id) ? "Remove from saved" : "Save for later"}
+                          >
+                            {savedArticles.includes(article.id) ? "♥" : "♡"}
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-zinc-400 mt-2">
+                          <span>{article.author}</span>
+                          <span className="text-emerald-400/70 group-hover:text-emerald-400 font-medium transition-colors">Read more →</span>
+                        </div>
+                        {savedArticles.includes(article.id) && (
+                          <div className="text-[10px] text-emerald-500 mt-1 tracking-widest">SAVED FOR LATER</div>
+                        )}
+                      </div>
+                    </motion.a>
+                  ))}
+                </div>
+              </ModalBody>
+
+              <ModalFooter className="px-8 pb-6">
+                <Button 
+                  variant="light" 
+                  onPress={onClose}
+                  className="text-xs tracking-widest text-zinc-400 hover:text-white"
+                >
+                  MAYBE LATER
+                </Button>
+                <Button 
+                  color="primary" 
+                  variant="bordered" 
+                  onPress={() => {
+                    onClose();
+                    window.location.href = '/blog';
+                  }}
+                  className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 text-xs tracking-widest"
+                >
+                  BROWSE ALL ARCHIVES
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

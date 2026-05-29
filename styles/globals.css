@@ -1,3 +1,33 @@
 @import "tailwindcss";
 
-@config "../tailwind.config.js"
+@config "../tailwind.config.js";
+
+/* === MExp v2 Design Tokens & Utilities === */
+:root {
+  --mexp-primary: #006FEE;
+  --mexp-accent: #99ff99;
+}
+
+/* Hide scrollbars but keep scroll (YearFilter + horizontal sections) */
+.year-filter-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.year-filter-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Engineering grid used on portal / apps pages */
+.engineering-grid {
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Safe area padding for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .controls {
+    padding-bottom: calc(0.35rem + env(safe-area-inset-bottom));
+  }
+}

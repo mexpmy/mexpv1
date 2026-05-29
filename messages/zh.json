@@ -1,19 +1,48 @@
 {
-  "Index": {
-    "title": "在 {year} 年构建未来："
-  },
-  "Hero": {
-    "mainTitle": "快速构建<important>精美</important>产品",
-    "description": "一个极简且有主见的启动模板，使用 Next.js、Tailwind 和 HeroUI 构建 — 专为速度和清晰度而设计。",
-    "getStarted": "开始使用",
-    "learnMore": "了解更多",
-    "footer": "由 <next>Next.js</next> 和 <hero>HeroUI</hero> 驱动"
+  "Common": {
+    "language": "语言",
+    "english": "English",
+    "malay": "Bahasa Melayu",
+    "chinese": "中文",
+    "close": "关闭",
+    "back": "返回",
+    "explore": "探索",
+    "viewArchive": "查看完整存档"
   },
   "Navbar": {
     "home": "首页",
     "docs": "文档",
-    "pricing": "价格",
+    "portfolio": "作品集",
+    "apps": "应用",
     "blog": "博客",
-    "about": "关于我们"
+    "about": "关于"
+  },
+  "Index": {
+    "title": "技术分析"
+  },
+  "Hero": {
+    "mainTitle": "为 <important>MExp Construction</important> 而构建。",
+    "description": "知识共享",
+    "getStarted": "MExp 门户",
+    "learnMore": "数字孪生",
+    "footer": "由 <next>Syahmi</next> 为 <hero>MExp</hero> 构建"
+  },
+  "Blog": {
+    "intro": "第一个网页并非由美学过剩驱动，而是建立在互联互通和共同知识追求的愿景之上。CERN 行模式浏览器是一个极简主义基础，永久改变了人类信息交换的轨迹——证明了深远的影响往往始于简单而得体的实用性。",
+    "philosophy": "作为一名从机械工程转向人工智能和数据科学的工程师，我认为技术不仅仅是纯粹的实用工具；我视其为一种 Amanah（信托）。我发现那些没有过度设计的系统中蕴含着深刻之美——结构完整性直接映射伦理完整性。我的理念根植于 Itqan（追求卓越）：构建智能、数据驱动的系统，如同完美加工的齿轮一样有益、尊重且精确。",
+    "securityTitle": "系统漏洞已记录",
+    "securitySubtitle": "安全优先 AI 的催化剂",
+    "securityBody": "最近一次数字身份泄露事件对我而言不是单纯的技术挫折，而是深刻的反思时刻。它强化了我的信念：真正的创新必须以保护和隐私为基础。这一事件已将我的职业轨迹重新导向安全优先的 AI 和机器学习——致力于开发保护数字完整性并尊重人类边界的系统。"
+  },
+  "Portfolio": {
+    "title": "五大支柱",
+    "subtitle": "塑造我们所构建一切的学科",
+    "selectPillar": "选择一个支柱进行探索"
+  },
+  "Apps": {
+    "nexus": "NEXUS 指挥系统",
+    "selectSystem": "选择要探索的系统",
+    "initialize": "初始化扫描",
+    "return": "返回 NEXUS"
   }
 }

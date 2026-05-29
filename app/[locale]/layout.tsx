@@ -1,6 +1,7 @@
 import { getMessages } from 'next-intl/server';
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/Footer";
 import "@/styles/globals.css";
 import { Metadata } from "next";
 import Script from "next/script";
@@ -10,13 +11,19 @@ import Script from "next/script";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://mymexp.com'),
   title: {
     default: "MExp by Syahmi",
-    template: "%s - My App Name",
+    template: "%s — MExp",
   },
-  description: "My digital Lab",
+  description: "Malaysian digital lab building precision systems at the intersection of engineering, AI, and construction.",
   icons: {
     icon: "/logo.png",
+  },
+  openGraph: {
+    title: "MExp by Syahmi",
+    description: "Malaysian digital lab. Engineering-grade digital twins, AI systems, and knowledge infrastructure.",
+    images: [{ url: "/logo.png" }],
   },
 };
 
@@ -48,6 +55,7 @@ export default async function LocaleLayout({
             <main className="flex-grow">
               {children}
             </main>
+            <Footer />
           </div>
         </Providers>
       </body>
