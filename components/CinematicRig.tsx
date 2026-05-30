@@ -12,15 +12,19 @@ import gsap from 'gsap';
 gsap.registerPlugin(useGSAP);
 useGLTF.preload('/models/semi-sub.glb');
 
-// Cinematic camera path for scroll experience (semi-sub model)
+// Labels + chapter navigation (used by the page for UI)
 export const CINEMATIC_PATH = [
-  { position: [95, 65, 155],  lookAt: [0, 35, 0],   label: "Overview" },     // Wide hero shot
-  { position: [18, 52, 38],   lookAt: [3, 46, 8],   label: "Helideck" },     // Approaching helideck
-  { position: [-48, 88, 52],  lookAt: [12, 68, 18], label: "Crane" },        // Crane hero
-  { position: [15, 28, 48],   lookAt: [5, 15, 12],  label: "Moonpool" },     // Looking into moonpool
-  { position: [-28, 18, 25],  lookAt: [2, 10, 5],   label: "BOP Stack" },    // Dramatic BOP
-  { position: [42, 42, 95],   lookAt: [0, 30, 0],   label: "Final Reveal" }, // Pull back beauty
+  { position: [95, 65, 155],  lookAt: [0, 35, 0],   label: "Overview" },
+  { position: [18, 52, 38],   lookAt: [3, 46, 8],   label: "Helideck" },
+  { position: [-48, 88, 52],  lookAt: [12, 68, 18], label: "Crane" },
+  { position: [15, 28, 48],   lookAt: [5, 15, 12],  label: "Moonpool" },
+  { position: [-28, 18, 25],  lookAt: [2, 10, 5],   label: "BOP Stack" },
+  { position: [42, 42, 95],   lookAt: [0, 30, 0],   label: "Final Reveal" },
 ];
+
+// Will be populated from shared JSON for actual camera animation
+let cameraSpline: THREE.CatmullRomCurve3 | null = null;
+let lookAtSpline: THREE.CatmullRomCurve3 | null = null;
 
 function RigModel({ onBloomReady }: { onBloomReady: (objs: THREE.Object3D[]) => void }) {
   const groupRef = useRef<THREE.Group>(null!);
@@ -67,16 +71,56 @@ function CinematicScene({
   const [bloomObjects, setBloomObjects] = useState<THREE.Object3D[]>([]);
   const bloomRef = useRef<any>(null);
 
-  // Scroll-scrubbed cinematic path (smooth camera movement)
+  // Load shared camera splines from JSON (same file used by Threepipe prototype)
+  React.useEffect(() => {
+    const loadSplines = async () => {
+      try {
+        const res = await fetch('/data/camera-paths.json');
+        const data = await res.json();
+
+        cameraSpline = new THREE.CatmullRomCurve3(
+          data.cameraPath.map((p: number[]) => new THREE.Vector3(p[0], p[1], p[2])),
+          false,
+          'catmullrom',
+          data.tension || 0.25
+        );
+
+        lookAtSpline = new THREE.CatmullRomCurve3(
+          data.lookAtPath.map((p: number[]) => new THREE.Vector3(p[0], p[1], p[2])),
+          false,
+          'catmullrom',
+          data.tension || 0.25
+        );
+
+        console.log('[R3F CinematicRig] Loaded shared camera splines from JSON');
+      } catch (e) {
+        console.warn('Could not load shared camera-paths.json, using fallback');
+      }
+    };
+    loadSplines();
+  }, []);
+
+  // Scroll-scrubbed cinematic path using shared splines when available
   useGSAP(() => {
     if (progress !== undefined) {
+      // Use shared splines if loaded (matches Threepipe prototype exactly)
+      if (cameraSpline && lookAtSpline) {
+        const p = Math.max(0, Math.min(1, progress));
+        const pos = cameraSpline.getPointAt(p);
+        const look = lookAtSpline.getPointAt(p);
+
+        camera.position.copy(pos);
+        camera.lookAt(look);
+        return;
+      }
+
+      // Fallback to old discrete points if JSON not loaded yet
       const path = CINEMATIC_PATH;
       const numPoints = path.length - 1;
       const p = Math.max(0, Math.min(1, progress)) * numPoints;
       const i = Math.floor(p);
       let t = p - i;
 
-      // Apply smoothstep for much smoother, more cinematic camera motion
       t = t * t * (3 - 2 * t);
 
       const current = path[Math.min(i, numPoints)];

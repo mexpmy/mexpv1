@@ -108,28 +108,30 @@ export const Navbar = () => {
           <Link isExternal aria-label="Instagram" href={siteConfig.links.instagram}>
             <InstagramIcon className="text-default-500" />
           </Link>
+          {/* Sponsor button before GitHub */}
+          <Link 
+            isExternal 
+            aria-label="Sponsor" 
+            href={siteConfig.links.sponsor}
+            className="text-sm text-default-500 hover:text-danger transition-colors flex items-center gap-1"
+          >
+            <HeartFilledIcon className="text-danger" />
+            <span className="hidden lg:inline text-xs font-medium">Sponsor</span>
+          </Link>
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
-        </NavbarItem>
         <LanguageSwitcher />
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+        {/* Sponsor before GitHub on mobile */}
+        <Link isExternal aria-label="Sponsor" href={siteConfig.links.sponsor}>
+          <HeartFilledIcon className="text-danger text-base" />
+        </Link>
         <Link isExternal aria-label="Github" href={siteConfig.links.github}>
           <GithubIcon className="text-default-500" />
         </Link>
