@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EngineeringDataViz from '@/components/EngineeringDataViz';
 import { PageWrapper } from '@/components/PageWrapper';
 import LinkedInBadge from '@/components/linkedin-badge';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase-browser';
 
 const RetroTerminal = ({ text }: { text: string }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -70,6 +70,7 @@ const RetroTerminal = ({ text }: { text: string }) => {
 
 export default function BlogPage() {
   const t = useTranslations('Blog');
+  const supabase = createClient();
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRecommendedOpen, setIsRecommendedOpen] = useState(false);
@@ -93,10 +94,10 @@ export default function BlogPage() {
       return shuffled.map((post, index) => ({
         id: post.id || String(index),
         title: post.title || "Untitled Entry",
-        author: "Syahmi Saadon",
-        readTime: `${Math.max(6, Math.floor((post.excerpt?.length || 300) / 40))} min`,
-        image: imagePool[index % imagePool.length],
-        href: `/blog/${post.slug || post.id || ""}`,
+        author: post.author || "Syahmi Saadon",
+        readTime: post.read_time || `${Math.max(6, Math.floor((post.excerpt?.length || 300) / 40))} min`,
+        image: post.image || imagePool[index % imagePool.length],
+        href: post.href || `/blog/${post.slug || post.id || ""}`,
         postId: post.id,
       }));
     }
@@ -119,7 +120,6 @@ export default function BlogPage() {
         .order('created_at', { ascending: false });
 
       if (error) {
-        // Formatted to string directly to bypass custom dev console layout object-swallowing bugs
         console.error(`Error fetching posts: [${error.code || 'STATUS_ERR'}] ${error.message || 'Unknown network anomaly'}`);
         if (error.details) console.error(`Details: ${error.details}`);
       } else if (data) {
@@ -332,29 +332,51 @@ export default function BlogPage() {
                   posts.map((post) => (
                     <article 
                       key={post.id} 
-                      className="border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/40 p-5 rounded-none relative group hover:border-emerald-500/50 transition-colors"
+                      className="border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/40 rounded-none relative group hover:border-emerald-500/50 transition-colors overflow-hidden flex flex-col"
                     >
-                      <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      {/* Corner Brackets */}
+                      <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity z-20"></div>
+                      <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity z-20"></div>
                       
-                      <div className="text-[10px] text-emerald-600 dark:text-emerald-500/70 mb-2 font-mono tracking-widest uppercase flex justify-between">
-                        <span>NODE_ENTRY: #{post.id?.substring(0, 8) || '7B7E36AB'}</span>
-                        <span>{post.created_at ? new Date(post.created_at).toLocaleDateString() : '5/27/2026'}</span>
+                      {/* Data-Feed Thumbnail */}
+                      {post.image && (
+                        <div className="relative w-full h-28 border-b border-zinc-200 dark:border-zinc-800 overflow-hidden bg-zinc-950">
+                          {/* Retro Scanline Overlay */}
+                          <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.3)_50%)] bg-[length:100%_4px] opacity-50 group-hover:opacity-20 transition-opacity" />
+                          
+                          {/* Emerald Tint Filter */}
+                          <div className="absolute inset-0 bg-emerald-900/30 mix-blend-color z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                          
+                          <img 
+                            src={post.image} 
+                            alt={post.title} 
+                            className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                          />
+                        </div>
+                      )}
+
+                      {/* Text Content Block */}
+                      <div className="p-5">
+                        <div className="text-[10px] text-emerald-600 dark:text-emerald-500/70 mb-3 font-mono tracking-widest uppercase flex justify-between items-center">
+                          <span>NODE_ENTRY: #{post.id?.substring(0, 8) || '7B7E36AB'}</span>
+                          <span>{post.created_at ? new Date(post.created_at).toLocaleDateString() : '6/9/2026'}</span>
+                        </div>
+                        
+                        <h4 className="text-sm text-zinc-900 dark:text-zinc-100 font-bold mb-2 uppercase tracking-wide group-hover:text-emerald-600 dark:group-hover:text-emerald-500 transition-colors leading-snug">
+                          {post.title}
+                        </h4>
+                        
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2 leading-relaxed">
+                          {post.excerpt || post.description || 'Live cloud-delivered database stream output verified.'}
+                        </p>
+                        
+                        <a 
+                          href={`/blog/${post.slug || post.id}`} 
+                          className="inline-block text-[10px] text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors uppercase tracking-widest font-black"
+                        >
+                          [ READ_FULL_REPORT ]
+                        </a>
                       </div>
-                      
-                      <h4 className="text-sm text-zinc-900 dark:text-zinc-100 font-bold mb-2 uppercase tracking-wide group-hover:text-emerald-600 dark:group-hover:text-emerald-500 transition-colors">
-                        {post.title}
-                      </h4>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2">
-                        {post.excerpt || post.description || 'Testing out the new database connection! This is pulling live from the cloud.'}
-                      </p>
-                      
-                      <a 
-                        href={`/blog/${post.slug || post.id}`} 
-                        className="inline-block text-[10px] text-emerald-600 dark:text-emerald-400 hover:underline uppercase tracking-widest font-black"
-                      >
-                        [ READ_FULL_REPORT ]
-                      </a>
                     </article>
                   ))
                 ) : (
