@@ -1,21 +1,22 @@
+// ══════════════════════════════════════════════════════════════
+// OPENCLAW — Supabase Admin Client (service role)
+// Use only in server-side API routes — never expose to client
+// ══════════════════════════════════════════════════════════════
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-// Note: We use the secure Service Role Key here, NOT the public anon key!
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_URL     = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-if (!supabaseUrl || !supabaseServiceRoleKey) {
-  console.warn("⚠️ Supabase Admin missing: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not defined.");
+if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+  throw new Error(
+    '[OpenClaw] Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars'
+  );
 }
 
-// Create the admin client (bypasses Row Level Security)
-export const supabaseAdmin = createClient(
-  supabaseUrl || '',
-  supabaseServiceRoleKey || '',
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+/**
+ * Admin Supabase client — bypasses RLS.
+ * Only use in Next.js API route handlers (server-side).
+ */
+export const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+  auth: { persistSession: false },
+});
