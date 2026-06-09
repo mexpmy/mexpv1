@@ -3,7 +3,7 @@
 // Admin-only: posts + views + subscriber stats
 // ══════════════════════════════════════════════════════════════
 import { NextRequest } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { supabaseAdmin } from '@/lib/supabase';
 import {
   handleOptions,
   requireAdminKey,
