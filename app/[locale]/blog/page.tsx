@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import EngineeringDataViz from '@/components/EngineeringDataViz';
 import { PageWrapper } from '@/components/PageWrapper';
 import LinkedInBadge from '@/components/linkedin-badge';
@@ -73,9 +72,6 @@ export default function BlogPage() {
   const supabase = createClient();
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRecommendedOpen, setIsRecommendedOpen] = useState(false);
-  const [hasTriggeredRecommended, setHasTriggeredRecommended] = useState(false);
-  const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [savedArticles, setSavedArticles] = useState<string[]>([]);
 
   // Dynamic recommended articles from actual posts (with high-quality fallback)
@@ -138,37 +134,6 @@ export default function BlogPage() {
       setSavedArticles(JSON.parse(saved));
     }
   }, []);
-
-  // Auto-trigger Recommended Articles modal at ~90% scroll depth (one time only)
-  // Also control floating button visibility starting at 40% scroll
-  useEffect(() => {
-    if (hasTriggeredRecommended) return;
-
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const docHeight = document.documentElement.scrollHeight;
-
-      const scrollPercent = ((scrollTop + windowHeight) / docHeight) * 100;
-
-      // Show floating button after 40% scroll (less intrusive)
-      if (scrollPercent > 40 && !showFloatingButton) {
-        setShowFloatingButton(true);
-      }
-
-      // Auto open modal at ~90% (once)
-      if (scrollPercent >= 88 && !hasTriggeredRecommended) {
-        setHasTriggeredRecommended(true);
-        // Small delay so user feels they've reached the end
-        setTimeout(() => {
-          setIsRecommendedOpen(true);
-        }, 650);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasTriggeredRecommended]);
 
   // Toggle save for later (persists in localStorage)
   const toggleSave = (articleId: string) => {
@@ -414,6 +379,84 @@ export default function BlogPage() {
           </aside>
         </main>
 
+        {/* --- NEW RECOMMENDED ARTICLES SECTION --- */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="mt-32 pt-16 border-t border-zinc-200 dark:border-white/10"
+        >
+          <div className="flex flex-col gap-1 mb-10">
+            <div className="flex items-center gap-3">
+              <div className="h-px w-8 bg-gradient-to-r from-emerald-500 to-transparent" />
+              <span className="text-emerald-600 dark:text-emerald-400 text-xs tracking-[3px] font-mono uppercase">END OF TRANSMISSION</span>
+            </div>
+            <h3 className="text-3xl font-semibold tracking-tight mt-2 text-zinc-900 dark:text-white">Thanks for reading.</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 max-w-md">
+              If this exploration resonated, here are a few other pieces from the archive that continue the conversation.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {recommendedArticles.map((article, index) => (
+              <motion.a
+                key={article.id}
+                href={article.href}
+                className="group block overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/60 hover:border-emerald-500/40 dark:hover:border-emerald-500/30 transition-all duration-300 shadow-sm"
+                whileHover={{ y: -4 }}
+              >
+                <div className="relative">
+                  <img 
+                    src={article.image} 
+                    alt={article.title}
+                    className="w-full h-[160px] object-cover transition-transform duration-700 group-hover:scale-[1.05]" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/80" />
+                  <div className="absolute bottom-3 right-3 text-[10px] px-2.5 py-0.5 rounded bg-black/70 text-cyan-400 font-mono tracking-widest backdrop-blur-sm">
+                    {article.readTime}
+                  </div>
+                </div>
+
+                <div className="p-5">
+                  <div className="flex justify-between items-start gap-3">
+                    <h4 className="font-semibold text-base leading-snug tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-cyan-300 transition-colors line-clamp-2 flex-1">
+                      {article.title}
+                    </h4>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleSave(article.id);
+                      }}
+                      className="mt-0.5 text-xl leading-none text-zinc-400 hover:text-emerald-500 transition-colors"
+                      aria-label={savedArticles.includes(article.id) ? "Remove from saved" : "Save for later"}
+                    >
+                      {savedArticles.includes(article.id) ? "♥" : "♡"}
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mt-4">
+                    <span>{article.author}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400/70 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 font-medium transition-colors uppercase tracking-wider text-[10px]">Read more →</span>
+                  </div>
+                  {savedArticles.includes(article.id) && (
+                    <div className="text-[10px] text-emerald-500 mt-2 tracking-widest font-bold">SAVED FOR LATER</div>
+                  )}
+                </div>
+              </motion.a>
+            ))}
+          </div>
+
+          <div className="mt-10 flex justify-end">
+            <a 
+              href="/blog"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-emerald-500/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs tracking-widest font-mono uppercase transition-colors rounded-lg"
+            >
+              BROWSE ALL ARCHIVES
+            </a>
+          </div>
+        </motion.section>
+
         {/* Footer Accent */}
         <footer className="mt-32 pt-12 border-t border-zinc-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-60 hover:opacity-100 transition-opacity">
           <div className="flex gap-10 text-[10px] uppercase tracking-[0.4em] font-black text-zinc-600 dark:text-slate-300">
@@ -425,130 +468,7 @@ export default function BlogPage() {
           </div>
         </footer>
 
-        {/* Floating "Recommended" button - appears after 40% scroll for better UX */}
-        {showFloatingButton && (
-          <button
-            onClick={() => setIsRecommendedOpen(true)}
-            className="fixed bottom-8 right-8 z-[60] flex items-center gap-2 px-5 py-2.5 rounded-full bg-zinc-950/90 backdrop-blur-xl border border-emerald-500/30 text-emerald-400 text-xs font-mono tracking-[1.5px] uppercase hover:bg-zinc-900 hover:border-emerald-400/60 hover:text-emerald-300 transition-all active:scale-[0.985] shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
-            aria-label="Open recommended articles"
-          >
-            <span className="text-base leading-none">★</span>
-            <span>RECOMMENDED</span>
-          </button>
-        )}
       </PageWrapper>
-
-      {/* Beautiful Recommended Articles Modal - Towards Data Science style */}
-      <Modal
-        isOpen={isRecommendedOpen}
-        onOpenChange={(open) => setIsRecommendedOpen(open)}
-        size="2xl"
-        classNames={{
-          base: "bg-zinc-950 text-white border border-white/10",
-          header: "border-b border-white/10",
-          body: "py-6",
-          footer: "border-t border-white/10",
-        }}
-        motionProps={{
-          variants: {
-            enter: { y: 0, opacity: 1, scale: 1, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } },
-            exit: { y: 30, opacity: 0, scale: 0.985, transition: { duration: 0.2, ease: [0.32, 0, 0.67, 1] } },
-          },
-        }}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1 px-8 pt-8">
-                <div className="flex items-center gap-3">
-                  <div className="h-px w-8 bg-gradient-to-r from-emerald-400 to-transparent" />
-                  <span className="text-emerald-400 text-xs tracking-[3px] font-mono uppercase">END OF TRANSMISSION</span>
-                </div>
-                <h3 className="text-3xl font-semibold tracking-tight mt-1">Thanks for reading.</h3>
-                <p className="text-sm text-zinc-400 mt-1 max-w-md">
-                  If this exploration resonated, here are a few other pieces from the archive that continue the conversation.
-                </p>
-              </ModalHeader>
-
-              <ModalBody className="px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                  {recommendedArticles.map((article, index) => (
-                    <motion.a
-                      key={article.id}
-                      href={article.href}
-                      onClick={onClose}
-                      className="group block overflow-hidden rounded-xl border border-white/10 bg-zinc-900/60 hover:bg-zinc-900 hover:border-emerald-500/30 transition-all duration-300"
-                      whileHover={{ y: -2 }}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.05 * index }}
-                    >
-                      <div className="relative">
-                        <img 
-                          src={article.image} 
-                          alt={article.title}
-                          className="w-full h-[138px] object-cover transition-transform duration-500 group-hover:scale-[1.04]" 
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70" />
-                        <div className="absolute bottom-3 right-3 text-[10px] px-2.5 py-0.5 rounded bg-black/70 text-cyan-400 font-mono tracking-widest">
-                          {article.readTime}
-                        </div>
-                      </div>
-
-                      <div className="p-4">
-                        <div className="flex justify-between items-start gap-2">
-                          <h4 className="font-semibold text-[15px] leading-tight tracking-tight group-hover:text-cyan-300 transition-colors line-clamp-2 flex-1">
-                            {article.title}
-                          </h4>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              toggleSave(article.id);
-                            }}
-                            className="mt-0.5 text-lg leading-none text-zinc-600 hover:text-emerald-400 transition-colors"
-                            aria-label={savedArticles.includes(article.id) ? "Remove from saved" : "Save for later"}
-                          >
-                            {savedArticles.includes(article.id) ? "♥" : "♡"}
-                          </button>
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-zinc-400 mt-2">
-                          <span>{article.author}</span>
-                          <span className="text-emerald-400/70 group-hover:text-emerald-400 font-medium transition-colors">Read more →</span>
-                        </div>
-                        {savedArticles.includes(article.id) && (
-                          <div className="text-[10px] text-emerald-500 mt-1 tracking-widest">SAVED FOR LATER</div>
-                        )}
-                      </div>
-                    </motion.a>
-                  ))}
-                </div>
-              </ModalBody>
-
-              <ModalFooter className="px-8 pb-6">
-                <Button 
-                  variant="light" 
-                  onPress={onClose}
-                  className="text-xs tracking-widest text-zinc-400 hover:text-white"
-                >
-                  MAYBE LATER
-                </Button>
-                <Button 
-                  color="primary" 
-                  variant="bordered" 
-                  onPress={() => {
-                    onClose();
-                    window.location.href = '/blog';
-                  }}
-                  className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 text-xs tracking-widest"
-                >
-                  BROWSE ALL ARCHIVES
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   );
 }
