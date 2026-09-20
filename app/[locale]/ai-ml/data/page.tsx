@@ -10,13 +10,15 @@ const entries = [
   },
 ];
 
-export default function DataIndex() {
+export default async function DataIndex({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(192,132,252,0.18),transparent_38%),linear-gradient(135deg,#09090b_0%,#18111f_100%)]" />
         <div className="relative mx-auto max-w-5xl px-6 pb-20 pt-20">
-          <Link href="/ai-ml" className="inline-flex items-center text-xs font-mono tracking-[2px] text-purple-400 transition hover:text-purple-300">← BACK TO AI / ML</Link>
+          <Link href={`/${locale}/ai-ml`} className="inline-flex items-center text-xs font-mono tracking-[2px] text-purple-400 transition hover:text-purple-300">← BACK TO AI / ML</Link>
           <div className="mt-10 max-w-3xl">
             <div className="text-sm font-mono tracking-[4px] text-purple-400">AI / ML · DATA</div>
             <h1 className="mt-4 text-6xl font-black leading-[0.9] tracking-[-3px] sm:text-8xl">The substrate<br />of intelligence.</h1>
@@ -37,7 +39,7 @@ export default function DataIndex() {
         <div className="mb-8 text-xs font-mono tracking-[3px] text-purple-400">FIELD NOTES / DATA</div>
         <div className="grid gap-6">
           {entries.map((entry) => (
-            <Link key={entry.href} href={entry.href} className="group block border border-white/10 bg-zinc-900/60 p-7 transition hover:-translate-y-1 hover:border-purple-400/50 hover:bg-zinc-900">
+            <Link key={entry.href} href={`/${locale}${entry.href}`} className="group block border border-white/10 bg-zinc-900/60 p-7 transition hover:-translate-y-1 hover:border-purple-400/50 hover:bg-zinc-900">
               <div className="flex flex-wrap items-start justify-between gap-6">
                 <div className="max-w-2xl">
                   <div className="text-xs font-mono tracking-[2px] text-purple-400">{entry.label}</div>

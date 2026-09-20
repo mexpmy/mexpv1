@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
@@ -23,6 +24,7 @@ function NeuralVisual() {
 
 export default function AIMLPillar() {
   const themes = ["Machine learning", "LLMs & agents", "Data science", "MLOps", "AI research", "Responsible AI"];
+  const locale = useLocale();
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white relative overflow-hidden">
@@ -59,7 +61,7 @@ export default function AIMLPillar() {
         <div className="text-xs tracking-[3px] text-purple-400 font-mono mb-4">CORE THEMES</div>
         <div className="flex flex-wrap gap-3">{themes.map((t, i) => <div key={i} className="px-5 py-2 rounded-full border border-purple-500/20 bg-purple-500/5 text-sm text-purple-200">{t}</div>)}</div>
 
-        <Link href="/ai-ml/data" className="mt-12 block rounded-2xl border border-purple-400/20 bg-purple-500/[0.06] p-6 transition hover:border-purple-400/50 hover:bg-purple-500/[0.1]">
+        <Link href={`/${locale}/ai-ml/data`} className="mt-12 block rounded-2xl border border-purple-400/20 bg-purple-500/[0.06] p-6 transition hover:border-purple-400/50 hover:bg-purple-500/[0.1]">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div>
               <div className="text-xs tracking-[3px] text-purple-400 font-mono mb-3">DATA / DEEP DIVES</div>

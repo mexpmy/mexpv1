@@ -5,11 +5,13 @@ export const metadata = {
   description: "A visual explainer on the mechanics, magnetics, and thermodynamics of a modern 3.5-inch SATA hard disk drive.",
 };
 
-export default function SataHddPage() {
+export default async function SataHddPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="mx-auto max-w-6xl px-6 pb-20 pt-12">
-        <Link href="/ai-ml/data" className="inline-flex items-center text-xs font-mono tracking-[2px] text-purple-400 transition hover:text-purple-300">← BACK TO DATA</Link>
+        <Link href={`/${locale}/ai-ml/data`} className="inline-flex items-center text-xs font-mono tracking-[2px] text-purple-400 transition hover:text-purple-300">← BACK TO DATA</Link>
         <div className="mt-10 max-w-3xl">
           <div className="text-sm font-mono tracking-[4px] text-purple-400">AI / ML · DATA · HARDWARE</div>
           <h1 className="mt-4 text-5xl font-black leading-[0.95] tracking-[-2px] sm:text-7xl">Inside a SATA<br />hard disk drive</h1>

@@ -3,13 +3,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { PortfolioScene } from "@/components/PortfolioScene";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 // ─── Data ─────────────────────────────────────────────────────────
-const PILLARS = [
+type Pillar = {
+  id: string;
+  label: string;
+  angle: number;
+  color: string;
+  glow: string;
+  icon: string;
+  tagline: string;
+  href: string;
+  description: string;
+  themes: string[];
+  stats: { posts: number; projects: number };
+  dataLink?: string;
+  dataLabel?: string;
+};
+
+const PILLARS: Pillar[] = [
   {
     id: "business",
     label: "Business",
@@ -51,6 +67,8 @@ const PILLARS = [
       "Deep dives into artificial intelligence, machine learning and data science. From foundational math to production ML systems, LLMs, agents and the broader implications of AI on society.",
     themes: ["Machine learning", "LLMs & agents", "Data science", "MLOps", "AI research"],
     stats: { posts: 24, projects: 5 },
+    dataLink: "/ai-ml/data/sata-hdd",
+    dataLabel: "VIEW SATA HDD EXPLAINER",
   },
   {
     id: "oilgas",
@@ -285,7 +303,7 @@ function RadialMenu({ onSelect, activeColor }: { onSelect: (id: string) => void;
 }
 
 // ─── Enhanced Slide-in Panel with deeper interactions ───────────────────────────────────────────────
-function PillarPanel({ pillar, onClose }: { pillar: typeof PILLARS[0]; onClose: () => void }) {
+function PillarPanel({ pillar, onClose, locale }: { pillar: typeof PILLARS[0]; onClose: () => void; locale: string }) {
   const total = pillar.stats.posts + pillar.stats.projects;
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -403,12 +421,25 @@ function PillarPanel({ pillar, onClose }: { pillar: typeof PILLARS[0]; onClose: 
               transition={{ delay: 0.7 }}
             >
               <Link 
-                href={pillar.href} 
+                href={`/${locale}${pillar.href}`} 
                 className="group inline-flex items-center gap-2 text-sm font-mono tracking-[1.5px] border-b border-white/30 hover:border-white pb-1 transition-colors"
               >
                 ENTER FULL {pillar.label.toUpperCase()} ARCHIVE 
                 <span className="group-hover:translate-x-0.5 transition">→</span>
               </Link>
+
+              {pillar.dataLink && (
+                <Link
+                  href={`/${locale}${pillar.dataLink}`}
+                  className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-purple-400/30 bg-purple-500/[0.08] p-4 text-purple-100 transition hover:border-purple-300/70 hover:bg-purple-500/[0.16]"
+                >
+                  <span>
+                    <span className="block text-[10px] font-mono tracking-[2px] text-purple-300">DATA DEEP DIVE</span>
+                    <span className="mt-1 block text-sm font-semibold">{pillar.dataLabel}</span>
+                  </span>
+                  <span className="font-mono text-purple-300">VIEW →</span>
+                </Link>
+              )}
             </motion.div>
           </div>
         </div>
@@ -476,6 +507,7 @@ function EntryScreen({ onEnter }: { onEnter: () => void }) {
 // ─── Page ─────────────────────────────────────────────────────────
 export default function PortfolioPage() {
   const t = useTranslations("Portfolio");
+  const locale = useLocale();
   const [entered, setEntered] = useState(false);
   const [entering, setEntering] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -605,6 +637,7 @@ export default function PortfolioPage() {
           <PillarPanel 
             key={activePillar.id} 
             pillar={activePillar} 
+            locale={locale}
             onClose={() => setSelectedId(null)} 
           />
         )}
