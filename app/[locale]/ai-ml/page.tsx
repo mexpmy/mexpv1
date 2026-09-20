@@ -58,6 +58,17 @@ export default function AIMLPillar() {
       <div className="max-w-5xl mx-auto px-6 py-16">
         <div className="text-xs tracking-[3px] text-purple-400 font-mono mb-4">CORE THEMES</div>
         <div className="flex flex-wrap gap-3">{themes.map((t, i) => <div key={i} className="px-5 py-2 rounded-full border border-purple-500/20 bg-purple-500/5 text-sm text-purple-200">{t}</div>)}</div>
+
+        <Link href="/ai-ml/data" className="mt-12 block rounded-2xl border border-purple-400/20 bg-purple-500/[0.06] p-6 transition hover:border-purple-400/50 hover:bg-purple-500/[0.1]">
+          <div className="flex flex-wrap items-start justify-between gap-6">
+            <div>
+              <div className="text-xs tracking-[3px] text-purple-400 font-mono mb-3">DATA / DEEP DIVES</div>
+              <h2 className="text-3xl font-black tracking-tight">The physical layer of intelligence</h2>
+              <p className="mt-3 max-w-2xl text-zinc-300">Hardware, storage, signals, and the engineering details that make intelligent systems possible.</p>
+            </div>
+            <span className="font-mono text-sm text-purple-300">OPEN DATA SECTION →</span>
+          </div>
+        </Link>
       </div>
 
       <div className="max-w-3xl mx-auto px-6 pb-20 text-lg text-zinc-300 leading-relaxed">
