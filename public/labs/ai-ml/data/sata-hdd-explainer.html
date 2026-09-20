@@ -1,34 +1,1009 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Inside a SATA hard disk drive</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inside a SATA hard disk drive — 9:16 explainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#08090b;--ink:#e9ebee;--muted:#8b939c;--line:#31363d;--blue:#6e9bd6;--orange:#ff7a2f;font-family:Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:#0b0c0f;color:var(--ink)}.wrap{max-width:1120px;margin:auto;padding:28px 20px 80px}.mast{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid var(--line);padding-bottom:20px}.mast h1{font-size:clamp(24px,4vw,40px);line-height:1;margin:0}.mast p{color:var(--muted);max-width:620px;margin:10px 0 0;line-height:1.5}.spec{font:12px monospace;color:var(--muted);white-space:nowrap}.spec b{display:block;color:var(--ink);font:700 16px Arial}.layout{display:grid;grid-template-columns:minmax(280px,440px) 1fr;gap:48px;margin-top:36px;align-items:start}.player{position:sticky;top:20px}.stage{position:relative;aspect-ratio:9/16;background:radial-gradient(circle at 50% 35%,#29313b,#08090b 66%);overflow:hidden;box-shadow:0 18px 48px #000;border:1px solid #272c32}.stage svg{width:100%;height:100%;display:block}.scene{display:none}.scene.on{display:block}.chrome{position:absolute;inset:0;pointer-events:none;z-index:2}.eyebrow,.hud{position:absolute;left:7%;right:7%;font:11px monospace;color:var(--muted);display:flex;justify-content:space-between}.eyebrow{top:5%}.hud{bottom:6%}.hud b{color:var(--ink)}.title{position:absolute;left:7%;right:10%;top:11%;font-size:clamp(20px,5cqw,36px);font-weight:800;line-height:1.05}.caption{position:absolute;left:7%;right:9%;bottom:12%;border-left:2px solid var(--ink);padding-left:12px;font-size:clamp(12px,3.5cqw,22px);line-height:1.35;background:linear-gradient(90deg,#08090bdd,transparent);padding-block:6px}.caption em{color:var(--blue);font-style:normal}.caption strong{color:var(--orange)}.controls{display:flex;gap:10px;align-items:center;margin-top:12px}button{border:1px solid var(--line);background:#111317;color:var(--ink);padding:8px 11px;cursor:pointer}button:hover{border-color:var(--blue)}.scrub{height:24px;flex:1;position:relative;cursor:pointer}.track,.fill{position:absolute;top:10px;height:3px;left:0;right:0}.track{background:var(--line)}.fill{right:auto;background:var(--ink)}.time{font:12px monospace;color:var(--muted);white-space:nowrap}.hint{font-size:12px;line-height:1.5;color:var(--muted)}.doc{border-top:1px solid var(--line)}.doc h2{margin:0;padding-top:0;font-size:24px}.shot{border-bottom:1px solid var(--line);padding:20px 0}.shot small{font:12px monospace;color:var(--blue)}.shot h3{margin:7px 0;font-size:18px}.shot p{color:#c5cad0;line-height:1.55;margin:0}.clean{position:fixed;inset:0;background:#000;z-index:5;display:flex;align-items:center;justify-content:center}.clean .stage{height:100vh;width:min(100vw,56.25vh);border:0}.exit{display:none;position:fixed;right:16px;top:16px;z-index:8}.clean~.exit{display:block}@media(max-width:820px){.layout{grid-template-columns:1fr;gap:32px}.player{position:static}.stage{max-width:440px;margin:auto}.mast{display:block}.spec{margin-top:14px}.doc{max-width:640px;margin:auto}}
+:root{
+  --void:#08090B; --graphite:#14161A; --slab:#1C1F24;
+  --platinum:#E9EBEE; --steel:#8B939C; --dim:#5A616A;
+  --flux:#6E9BD6;      /* magnetisation / field */
+  --ember:#FF7A2F;     /* thermal energy, HAMR only */
+  --rule:rgba(233,235,238,.14);
+  --page:#0B0C0F; --ink:#E9EBEE; --ink-2:#8B939C; --card:#111317; --edge:rgba(233,235,238,.10);
+  --sans:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root:not([data-theme="dark"]){ }
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --page:#F2F2F0; --ink:#15171B; --ink-2:#5C636C; --card:#FFFFFF; --edge:rgba(20,22,26,.12);
+  }
+}
+:root[data-theme="light"]{ --page:#F2F2F0; --ink:#15171B; --ink-2:#5C636C; --card:#FFFFFF; --edge:rgba(20,22,26,.12); }
+:root[data-theme="dark"]{ --page:#0B0C0F; --ink:#E9EBEE; --ink-2:#8B939C; --card:#111317; --edge:rgba(233,235,238,.10); }
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,56px) clamp(16px,4vw,32px) 96px}
+
+/* ---------- masthead ---------- */
+.mast{display:flex;flex-wrap:wrap;gap:18px 40px;align-items:flex-end;justify-content:space-between;
+  padding-bottom:20px;border-bottom:1px solid var(--edge);margin-bottom:clamp(22px,4vw,40px)}
+.mast h1{font-size:clamp(24px,3.4vw,38px);font-weight:800;letter-spacing:-.025em;margin:0;max-width:18ch;line-height:1.1}
+.mast p{margin:6px 0 0;color:var(--ink-2);font-size:14.5px;max-width:52ch}
+.specs{display:flex;gap:26px;font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.specs b{display:block;font-family:var(--sans);font-weight:600;font-size:15px;color:var(--ink);letter-spacing:-.01em}
+
+.layout{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:clamp(24px,4vw,56px);align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+
+/* ---------- 9:16 stage ---------- */
+.player{position:sticky;top:calc(20px + env(safe-area-inset-top,0px))}
+@media (max-width:860px){.player{position:static}}
+.stage{position:relative;width:100%;aspect-ratio:9/16;background:var(--void);overflow:hidden;
+  border-radius:4px;box-shadow:0 1px 0 var(--edge),0 24px 60px -30px rgba(0,0,0,.8);
+  container-type:inline-size}
+.scene{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .45s ease}
+.scene.on{opacity:1}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* chrome */
+.ticker{position:absolute;top:2.4cqw;left:6cqw;right:6cqw;display:flex;gap:.9cqw;z-index:6}
+.ticker i{flex:1;height:1.6px;background:rgba(233,235,238,.2);position:relative;overflow:hidden}
+.ticker i::after{content:'';position:absolute;inset:0;background:var(--platinum);transform:scaleX(var(--p,0));transform-origin:left}
+.eyebrow{position:absolute;top:6.4cqw;left:6cqw;right:6cqw;z-index:6;display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:2.5cqw;color:var(--dim);letter-spacing:.04em}
+.eyebrow span:last-child{color:var(--steel)}
+.stitle{position:absolute;top:11.5cqw;left:6cqw;right:16cqw;z-index:6;font-size:5.4cqw;font-weight:800;
+  line-height:1.08;letter-spacing:-.03em;color:var(--platinum);opacity:0}
+.stitle.on{opacity:1}
+
+.hud{position:absolute;left:6cqw;bottom:6.6cqw;z-index:6;font-family:var(--mono);font-size:2.6cqw;
+  color:var(--steel);letter-spacing:.02em;white-space:nowrap}
+.hud b{color:var(--platinum);font-weight:500}
+
+.cap{position:absolute;left:6cqw;right:24cqw;bottom:12.5cqw;z-index:6;padding-left:3.2cqw;
+  border-left:1.5px solid var(--platinum);min-height:9cqw}
+.cap p{margin:0;font-size:3.5cqw;line-height:1.38;font-weight:500;color:var(--platinum);letter-spacing:-.012em}
+.cap p em{font-style:normal;color:var(--flux)}
+.cap p u{text-decoration:none;color:var(--ember)}
+.cap p k{font-family:var(--mono);font-weight:500;font-size:.94em;letter-spacing:-.01em}
+
+.logo{position:absolute;right:5cqw;bottom:5cqw;width:13cqw;z-index:7;opacity:.9}
+.logo img{display:block;width:100%}
+
+.vig{position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:radial-gradient(120% 78% at 50% 34%,transparent 40%,rgba(0,0,0,.72) 100%)}
+.grain{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:.5;mix-blend-mode:overlay}
+
+/* controls */
+.ctrl{display:flex;align-items:center;gap:12px;margin-top:12px}
+.scrub{flex:1;position:relative;height:22px;display:flex;align-items:center;cursor:pointer}
+.scrub .track{position:absolute;left:0;right:0;height:3px;background:var(--edge)}
+.scrub .fill{position:absolute;left:0;height:3px;background:var(--ink);width:0}
+.scrub .mark{position:absolute;width:1px;height:9px;background:var(--page);mix-blend-mode:difference;opacity:.9}
+button{font:inherit;font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--ink);
+  background:transparent;border:1px solid var(--edge);border-radius:2px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}
+button:focus-visible,.scrub:focus-visible{outline:2px solid var(--flux);outline-offset:2px}
+.tc{font-family:var(--mono);font-size:12px;color:var(--ink-2);min-width:76px;text-align:right}
+.hint{margin:10px 0 0;font-size:12.5px;color:var(--ink-2)}
+
+/* clean view for screen-recording */
+body.clean{overflow:hidden}
+body.clean .wrap{display:none}
+body.clean .cleanstage{display:flex}
+.cleanstage{display:none;position:fixed;inset:0;background:#000;align-items:center;justify-content:center;z-index:99}
+.cleanstage .stage{width:min(100vw,calc(100dvh * 9 / 16));height:auto;aspect-ratio:9/16;border-radius:0;box-shadow:none}
+.exit{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:100;
+  color:#fff;border-color:rgba(255,255,255,.35);background:rgba(0,0,0,.5)}
+body:not(.clean) .exit{display:none}
+
+/* ---------- script + storyboard ---------- */
+.doc h2{font-size:clamp(19px,2.2vw,24px);font-weight:800;letter-spacing:-.025em;margin:0 0 6px}
+.doc .lede{color:var(--ink-2);font-size:14.5px;margin:0 0 28px;max-width:62ch}
+.shot{border-top:1px solid var(--edge);padding:22px 0;display:grid;grid-template-columns:84px 1fr;gap:20px}
+.shot:last-child{border-bottom:1px solid var(--edge)}
+.shot .tcode{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);padding-top:3px}
+.shot .tcode b{display:block;color:var(--ink);font-family:var(--sans);font-size:13px;font-weight:600}
+.shot h3{margin:0 0 10px;font-size:17px;font-weight:600;letter-spacing:-.02em}
+.vo{margin:0 0 14px;font-size:15.5px;line-height:1.6;max-width:60ch}
+.vo::before{content:'“'}
+.vo::after{content:'”'}
+.notes{margin:0;padding:0;list-style:none;display:grid;gap:7px;max-width:64ch}
+.notes li{display:grid;grid-template-columns:78px 1fr;gap:14px;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.notes li span{font-family:var(--mono);font-size:11.5px;color:var(--dim);padding-top:2px}
+.notes li b{color:var(--ink);font-weight:500}
+.math{margin:14px 0 0;padding:12px 14px;background:var(--card);border:1px solid var(--edge);border-radius:3px;
+  font-family:var(--mono);font-size:13px;line-height:1.75;color:var(--ink);max-width:60ch;overflow-x:auto}
+.math i{color:var(--ink-2);font-style:normal}
+.tail{margin-top:56px;padding-top:24px;border-top:1px solid var(--edge);color:var(--ink-2);font-size:13.5px;max-width:64ch}
+.tail h2{margin-bottom:12px}
+.tail ul{padding-left:18px;margin:0 0 16px}
+.tail li{margin-bottom:6px}
+@media (prefers-reduced-motion:reduce){.scene{transition:none}}
 </style>
 </head>
 <body>
-<div class="wrap" id="page"><header class="mast"><div><h1>Inside a SATA hard disk drive</h1><p>Mechanics, magnetics, and thermodynamics inside a modern 3.5-inch drive.</p></div><div class="spec"><b>3:00</b>runtime<br><b>9:16</b>vertical explainer</div></header><main class="layout"><section class="player"><div class="stage" id="stage"><div class="chrome"><div class="eyebrow"><span id="count">01 / 08</span><span id="name">Cold open</span></div><div class="title" id="title"></div><div class="caption" id="caption"></div><div class="hud" id="hud"></div></div><div id="scenes"></div></div><div class="controls"><button id="play">Pause</button><div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Timeline"><div class="track"></div><div class="fill" id="fill"></div></div><div class="time" id="time">0:00 / 3:00</div></div><div class="controls"><button id="clean">Clean view</button><button id="restart">Restart</button></div><p class="hint">Scrub with the bar or arrow keys. Clean view removes the page chrome for recording.</p></section><section class="doc"><h2>Eight sequences</h2><div id="board"></div></section></main></div><button class="exit" id="exit">Exit clean view</button>
+
+<button class="exit" id="exit">Exit clean view</button>
+<div class="cleanstage" id="cleanstage"></div>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <h1>Inside a SATA hard disk drive</h1>
+      <p>A three-minute vertical explainer on the mechanics, magnetics and thermodynamics of a modern 3.5-inch drive. Animation, narration script and shot-by-shot board.</p>
+    </div>
+    <div class="specs">
+      <div><b>3:00</b>runtime</div>
+      <div><b>9:16</b>1080 × 1920</div>
+      <div><b>8</b>sequences</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="player">
+      <div class="stage" id="stage">
+        <div class="ticker" id="ticker"></div>
+        <div class="eyebrow"><span id="ebL">01 / 08</span><span id="ebR"></span></div>
+        <div class="stitle" id="stitle"></div>
+        <div id="scenes"></div>
+        <div class="vig"></div>
+        <div class="hud" id="hud"></div>
+        <div class="cap" id="cap"><p></p></div>
+        <div class="logo"><img src="data:image/png;base64,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" alt="Marine Express"></div>
+      </div>
+      <div class="ctrl">
+        <button id="play">Play</button>
+        <div class="scrub" id="scrub" tabindex="0" role="slider" aria-label="Timeline" aria-valuemin="0" aria-valuemax="180" aria-valuenow="0">
+          <div class="track"></div><div class="fill" id="fill"></div>
+        </div>
+        <div class="tc" id="tc">0:00 / 3:00</div>
+      </div>
+      <div class="ctrl" style="margin-top:8px">
+        <button id="cleanbtn">Clean view for recording</button>
+        <button id="restart">Restart</button>
+      </div>
+      <p class="hint">Scrub with the bar or arrow keys. Clean view fills the screen at 9:16 with the interface hidden — capture it with any screen recorder for an MP4.</p>
+    </div>
+
+    <main class="doc" id="doc"></main>
+  </div>
+
+  <div class="tail">
+    <h2>Production notes</h2>
+    <ul>
+      <li><b>Frame:</b> 1080 × 1920, 30 fps. Action is kept inside a 6% side margin; the lower 22% is reserved for the caption band and the logo, which sits bottom-right at 13% frame width throughout.</li>
+      <li><b>Colour logic:</b> the frame is monochrome graphite and platinum. Only two hues appear, and each one means something — blue is magnetisation and magnetic field, orange is heat. Orange is held back until HAMR at 2:35 so it reads as an event.</li>
+      <li><b>Typography:</b> Archivo for titles and narration captions; IBM Plex Mono reserved for measured quantities, so numbers are visually separable from prose.</li>
+      <li><b>Narration:</b> approximately 470 words at 135–145 wpm, unhurried. Every figure spoken is also on screen for at least two seconds.</li>
+      <li><b>Accuracy notes:</b> early longitudinal media used cobalt-chromium-tantalum; current perpendicular media is a cobalt-chromium-platinum-oxide granular film, and the script says both. Modern read heads are tunnelling magnetoresistive with an MgO barrier — GMR is named as the discovery that started the lineage, not as what is in the drive today.</li>
+    </ul>
+  </div>
+</div>
+
 <script>
-const D=180, scenes=[
- ['Cold open',16,'Inside a SATA<br>hard disk drive','A platter of aluminium-magnesium alloy turns at <strong>7,200 rpm</strong>. The sensor rides above it without touching.','spindle <b>7,200</b> rpm · rim <b>35.8 m/s</b>'],
- ['Component anatomy',26,'Seven parts,<br>one air-tight box','Platters, actuator, spindle, filters, and controller share one carefully sealed casting.','3 platters · 6 heads · 1 actuator'],
- ['The air bearing',24,'It does not hover.<br>It flies.','The moving platter creates a pressure wedge. The head settles about <em>15 nm</em> above the surface.','fly height <b>15 nm</b> · air mean path <b>66 nm</b>'],
- ['Voice coil motor',22,'Positioning is a<br>Lorentz-force problem','Current through a coil in a magnetic field moves every head together.','B <b>0.6 T</b> · I <b>1 A</b> · F <b>0.3 N</b>'],
- ['Writing bits',30,'A bit is not a pole.<br>A bit is a change.','A write head flips the magnetisation of nanoscale cobalt-alloy grains.','grain <b>8 nm</b> · bit cell <b>50 x 13 nm</b>'],
- ['Reading bits',20,'Reading is<br>quantum mechanics','A tunnelling magnetoresistive sensor turns the field from a bit into a resistance change.','parallel -> low R · antiparallel -> high R'],
- ['Pushing density',28,'Four ways past<br>the same wall','Perpendicular, shingled, and heat-assisted recording keep density moving forward.','thermal limit · <b>Ku V / kB T >= 60</b>'],
- ['Close',14,'','Thirty-six metres a second. Fifteen nanometres apart. Years without touching.','MExp · engineering, explained']
+/* ============================ timeline engine ============================ */
+const DUR = 180;
+const el = id => document.getElementById(id);
+const clamp=(v,a=0,b=1)=>v<a?a:v>b?b:v;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const out=x=>1-Math.pow(1-x,3);
+const lerp=(a,b,x)=>a+(b-a)*x;
+const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+const NS='http://www.w3.org/2000/svg';
+function svg(tag,attrs,parent){const n=document.createElementNS(NS,tag);
+  for(const k in attrs)n.setAttribute(k,attrs[k]); if(parent)parent.appendChild(n); return n;}
+</script>
+<script>
+/* ===================== shared drawing helpers ===================== */
+const ISOa=0.94, ISOb=0.34;
+const iso=(cx,cy,X,Z)=>[cx+(X-Z)*ISOa, cy+(X+Z)*ISOb];
+function diamond(cx,cy,hx,hz){
+  const p=[[hx,hz],[hx,-hz],[-hx,-hz],[-hx,hz]].map(([X,Z])=>iso(cx,cy,X,Z));
+  return p.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');
+}
+const PRX = r => r*ISOa*Math.SQRT2, PRY = r => r*ISOb*Math.SQRT2;
+function mk(p,t,a){const n=document.createElementNS(NS,t);for(const k in a)n.setAttribute(k,a[k]);p.appendChild(n);return n;}
+const W='rgba(233,235,238,', FLUX='#6E9BD6', EMB='#FF7A2F', PLAT='#E9EBEE', STL='#8B939C';
+
+/* ===================== scene 1 — cold open ===================== */
+const SC1={
+ title:'Inside a SATA<br>hard disk drive',
+ titleT:[3.4,15.6],
+ hud:t=>{const p=ease(clamp(t/4.5));return `spindle <b>${Math.round(p*7200).toLocaleString()}</b> rpm · edge <b>${(p*35.8).toFixed(1)}</b> m/s`;},
+ caps:[[0.4,'A disk of aluminium-magnesium alloy, <k>95 mm</k> across, turning <k>7,200</k> times a minute.'],
+       [6.2,'At the rim the surface is travelling at <k>35.8 m/s</k> — faster than a car on a motorway.'],
+       [11.0,'And riding above it, closer than a particle of smoke, is a sensor that never touches it.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <defs>
+   <radialGradient id="s1m" cx="36%" cy="26%" r="86%">
+    <stop offset="0" stop-color="#454C55"/><stop offset=".5" stop-color="#20242A"/><stop offset="1" stop-color="#0A0C0F"/>
+   </radialGradient>
+   <clipPath id="s1c"><circle cx="270" cy="408" r="199"/></clipPath>
+  </defs>
+  <g class="pl">
+   <circle cx="270" cy="408" r="200" fill="url(#s1m)"/>
+   <g clip-path="url(#s1c)"><g class="rot"></g></g>
+   <g class="trk"></g>
+   <circle cx="270" cy="408" r="200" fill="none" stroke="${W}.3)" stroke-width="1"/>
+   <circle cx="270" cy="408" r="40" fill="#0A0C0F" stroke="${W}.4)"/>
+   <circle cx="270" cy="408" r="13" fill="#1C1F24" stroke="${W}.22)"/>
+  </g>
+  <g class="dim" opacity="0">
+   <line x1="70" y1="408" x2="118" y2="408" stroke="${W}.35)"/>
+   <line x1="422" y1="408" x2="470" y2="408" stroke="${W}.35)"/>
+   <text x="270" y="638" text-anchor="middle" fill="${STL}" font-family="IBM Plex Mono" font-size="15">95 mm platter</text>
+  </g>
+  <g class="arm">
+   <polygon points="486,668 472,684 322,528 338,512" fill="#262A30" stroke="${W}.28)" stroke-width="1"/>
+   <circle cx="479" cy="676" r="17" fill="#14161A" stroke="${W}.35)"/>
+   <circle cx="479" cy="676" r="5" fill="${W}.3)"/>
+   <polygon points="338,512 322,528 306,512 322,496" fill="${PLAT}"/>
+   <circle class="hd" cx="322" cy="512" r="4.5" fill="${FLUX}"/>
+  </g>
+ </svg>`,
+ init(g){
+  const rot=g.querySelector('.rot'), trk=g.querySelector('.trk');
+  for(let i=0;i<96;i++){const a=i/96*Math.PI*2, o=(i%8===0)?.3:.09;
+    mk(rot,'line',{x1:270+Math.cos(a)*58,y1:408+Math.sin(a)*58,x2:270+Math.cos(a)*198,y2:408+Math.sin(a)*198,
+      stroke:W+o+')','stroke-width':i%8===0?1.4:.7});}
+  mk(rot,'path',{d:`M 270 408 L ${270+Math.cos(-.2)*198} ${408+Math.sin(-.2)*198} A 198 198 0 0 1 ${270+Math.cos(.12)*198} ${408+Math.sin(.12)*198} Z`,fill:W+'.07)'});
+  [72,104,136,168].forEach(r=>mk(trk,'circle',{cx:270,cy:408,r,fill:'none',stroke:W+'.1)','stroke-width':.8}));
+ },
+ draw(t,g){
+  const p=ease(clamp(seg(t,0,1.8)));
+  g.querySelector('.pl').setAttribute('opacity',p);
+  g.querySelector('.pl').setAttribute('transform',`translate(270 408) scale(${lerp(.86,1,p)}) translate(-270 -408)`);
+  g.querySelector('.rot').setAttribute('transform',`rotate(${t*255} 270 408)`);
+  g.querySelector('.dim').setAttribute('opacity',seg(t,5.6,7)*.9);
+  const ap=ease(seg(t,2.4,4.6));
+  const a=lerp(26,-4,ap)+Math.sin(t*2.1)*(t>5?1.6:0);
+  const arm=g.querySelector('.arm');
+  arm.setAttribute('opacity',ap);
+  arm.setAttribute('transform',`rotate(${a} 479 676)`);
+  g.querySelector('.hd').setAttribute('opacity',.45+.55*Math.abs(Math.sin(t*3)));
+ }};
+
+/* ===================== scene 2 — exploded anatomy ===================== */
+const LAYERS=[
+ {k:'cover', y0:430, y1:196},
+ {k:'plat0', y0:430, y1:290},
+ {k:'plat1', y0:430, y1:344},
+ {k:'plat2', y0:430, y1:398},
+ {k:'act',   y0:430, y1:462},
+ {k:'base',  y0:430, y1:540},
+ {k:'pcb',   y0:430, y1:614}
 ];
-let t=0,playing=true,last=0,current=-1;
-const $=id=>document.getElementById(id), clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
-let acc=0;scenes.forEach(s=>{s.t0=acc;s.t1=acc+s[1];acc=s.t1});
-function svgScene(i){return `<svg viewBox="0 0 540 960" aria-label="${scenes[i][0]}"><defs><radialGradient id="g${i}"><stop stop-color="#56616d"/><stop offset="1" stop-color="#101318"/></radialGradient></defs><g id="art${i}"></g></svg>`}
-scenes.forEach((s,i)=>{const el=document.createElement('div');el.className='scene';el.innerHTML=svgScene(i);$('scenes').appendChild(el);const row=document.createElement('article');row.className='shot';row.innerHTML=`<small>${String(i+1).padStart(2,'0')} · ${fmt(s[1])}</small><h3>${s[0]}</h3><p>${s[3]}</p>`;$('board').appendChild(row)});
-function drawArt(i,lt){const g=$('art'+i);g.innerHTML='';const cx=270,cy=420;if(i===0||i===1||i===7){for(let n=0;n<(i===1?3:1);n++){const y=cy+n*34;g.insertAdjacentHTML('beforeend',`<ellipse cx="${cx}" cy="${y}" rx="190" ry="72" fill="url(#g${i})" stroke="#6e9bd655"/><circle cx="${cx}" cy="${y}" r="28" fill="#08090b" stroke="#e9ebee66"/>`)}g.insertAdjacentHTML('beforeend',`<path d="M470 680 L320 450" stroke="#e9ebee" stroke-width="13"/><circle cx="320" cy="450" r="6" fill="#6e9bd6"/>`)}else if(i===2){g.insertAdjacentHTML('beforeend',`<rect y="500" width="540" height="80" fill="#252b32"/><path d="M80 430 L390 430 L370 480 L100 480Z" fill="#56616d" stroke="#e9ebee"/><path d="M40 460 Q180 ${450-Math.sin(lt)*12} 500 440" fill="none" stroke="#6e9bd6" stroke-dasharray="14 18" stroke-width="3"/><text x="76" y="620" fill="#ff7a2f" font-family="monospace" font-size="22">15 nm</text>`)}else if(i===3){g.insertAdjacentHTML('beforeend',`<circle cx="360" cy="430" r="125" fill="#20262d" stroke="#e9ebee66"/><path d="M360 330 A100 100 0 0 1 360 530" fill="none" stroke="#6e9bd6" stroke-width="9" stroke-dasharray="12 12"/><path d="M480 430 l-70 -15 v30z" fill="#ff7a2f"/><text x="40" y="700" fill="#e9ebee" font-family="monospace" font-size="22">F = B * I * L</text>`)}else if(i===4){for(let n=0;n<28;n++){const x=40+n*17;const up=n%3?1:-1;g.insertAdjacentHTML('beforeend',`<rect x="${x}" y="410" width="14" height="70" fill="#303944"/><path d="M${x+7} 465 V${up>0?420:460}" stroke="${up>0?'#6e9bd6':'#ff7a2f'}" stroke-width="3"/>`)}g.insertAdjacentHTML('beforeend',`<rect x="${80+((lt*32)%360)}" y="280" width="50" height="100" fill="#e9ebee"/><path d="M${105+((lt*32)%360)} 380 V410" stroke="#6e9bd6" stroke-width="3"/>`)}else if(i===5){g.insertAdjacentHTML('beforeend',`<rect x="145" y="300" width="250" height="145" fill="#303944" stroke="#e9ebee"/><rect x="145" y="355" width="250" height="18" fill="#8b939c"/><path d="M270 540 V445" stroke="#6e9bd6" stroke-width="5"/><path d="M270 540 V470" stroke="#ff7a2f" stroke-width="2" stroke-dasharray="5 9"/><text x="80" y="680" fill="#e9ebee" font-family="monospace" font-size="22">delta R / R</text>`)}else{for(let n=0;n<5;n++)g.insertAdjacentHTML('beforeend',`<rect x="65" y="330" width="370" height="52" transform="translate(0 ${n*48})" fill="${n===4?'#46586a':'#20262d'}" stroke="#6e9bd655"/>`);g.insertAdjacentHTML('beforeend',`<path d="M270 270 L270 330" stroke="#ff7a2f" stroke-width="4"/><text x="65" y="650" fill="#ff7a2f" font-family="monospace" font-size="22">450 C / &lt; 1 ns</text>`)} }
-function render(){let i=scenes.findIndex(s=>t<s.t1);if(i<0)i=7;const s=scenes[i],lt=t-s.t0;if(i!==current){document.querySelectorAll('.scene').forEach((n,j)=>n.classList.toggle('on',j===i));$('count').textContent=String(i+1).padStart(2,'0')+' / 08';$('name').textContent=s[0];current=i}$('title').innerHTML=s[2];$('caption').innerHTML=s[3];$('hud').innerHTML=s[4];drawArt(i,lt);$('fill').style.width=(t/D*100)+'%';$('time').textContent=fmt(t)+' / 3:00';}
-function loop(now){if(!playing)return;if(!last)last=now;t+=Math.min(.1,(now-last)/1000);last=now;if(t>=D){t=D;playing=false;$('play').textContent='Replay'}render();requestAnimationFrame(loop)}
-$('play').onclick=()=>{if(t>=D)t=0;playing=!playing;$('play').textContent=playing?'Pause':'Play';last=0;if(playing)requestAnimationFrame(loop)};$('restart').onclick=()=>{t=0;playing=true;last=0;$('play').textContent='Pause';render();requestAnimationFrame(loop)};
-function seek(e){const r=$('scrub').getBoundingClientRect();t=clamp((e.clientX-r.left)/r.width)*D;render()}$('scrub').onclick=seek;$('scrub').onkeydown=e=>{if(e.key==='ArrowRight')t=clamp(t+2,0,D);if(e.key==='ArrowLeft')t=clamp(t-2,0,D);render()};$('clean').onclick=()=>{$('page').classList.add('clean');$('stage').requestFullscreen?.()};$('exit').onclick=()=>{$('page').classList.remove('clean');document.exitFullscreen?.()};document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)$('page').classList.remove('clean')});render();requestAnimationFrame(loop);
-</script></body></html>
+const CALL=[
+ {at:4.5, to:'cover', y:152, side:1, tx:'Top cover, gasket-sealed',  sub:'not a vacuum — 1 atm of filtered air'},
+ {at:7.0, to:'cover', y:236, side:-1,tx:'Breather filter',           sub:'0.3 µm, equalises pressure'},
+ {at:9.5, to:'plat1', y:306, side:1, tx:'Platters · Al-Mg alloy',    sub:'0.635 mm, flat to a few nm'},
+ {at:12.4,to:'act',   y:470, side:-1,tx:'Actuator + voice coil',     sub:'moves every head together'},
+ {at:15.0,to:'plat2', y:398, side:1, tx:'Spindle motor',             sub:'fluid-dynamic bearing'},
+ {at:17.6,to:'base',  y:578, side:-1,tx:'Recirculating filter',      sub:'sweeps debris continuously'},
+ {at:20.2,to:'pcb',   y:646, side:1, tx:'PCB',                       sub:'controller · cache · SATA'}
+];
+const SC2={
+ title:'Seven parts,<br>one air-tight box',
+ titleT:[0.6,4.2],
+ hud:'3 platters · 6 heads · 1 actuator',
+ caps:[[0.5,'Inside the casting: platters of aluminium-magnesium alloy, ground flat and sputtered with magnetic film.'],
+       [7.5,'A spindle motor. An actuator arm carrying the heads, swung by a <em>voice coil motor</em>.'],
+       [13.5,'It is not a vacuum. A gasket seals it, a breather filter equalises pressure, and a recirculating filter scrubs the air for the life of the drive.'],
+       [20.0,'Underneath sits the board: controller, cache and the SATA interface.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <defs>
+   <linearGradient id="s2p" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#4A525B"/><stop offset=".45" stop-color="#252A31"/><stop offset="1" stop-color="#3A414A"/></linearGradient>
+   <linearGradient id="s2c" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#2E343B"/><stop offset="1" stop-color="#13161A"/></linearGradient>
+  </defs>
+  <g class="stack"></g><g class="calls"></g>
+ </svg>`,
+ init(g){
+  const S=g.querySelector('.stack'), cx=270;
+  const node=k=>{const n=mk(S,'g',{class:'L '+k,'data-k':k});return n;};
+  // base casting
+  const base=node('base');
+  mk(base,'polygon',{points:diamond(cx,0,132,96),fill:'url(#s2c)',stroke:W+'.3)','stroke-width':1.2});
+  mk(base,'polygon',{points:diamond(cx,0,104,72),fill:'#0B0D10',stroke:W+'.14)'});
+  mk(base,'polygon',{points:diamond(cx-46,6,18,16),fill:'#1E2228',stroke:W+'.26)'});
+  // pcb
+  const pcb=node('pcb');
+  mk(pcb,'polygon',{points:diamond(cx,0,130,94),fill:'#10151A',stroke:W+'.26)'});
+  [[-40,-26,20,16],[24,-8,16,14],[-6,40,26,10],[58,34,10,9]].forEach(([X,Z,hx,hz])=>
+    mk(pcb,'polygon',{points:diamond(...iso(cx,0,X,Z),hx,hz),fill:'#20262D',stroke:W+'.2)'}));
+  // platters
+  [0,1,2].forEach(i=>{const p=node('plat'+i);
+    mk(p,'ellipse',{cx,cy:0,rx:PRX(95),ry:PRY(95),fill:'url(#s2p)',stroke:W+'.34)','stroke-width':1.1});
+    mk(p,'ellipse',{cx,cy:0,rx:PRX(60),ry:PRY(60),fill:'none',stroke:W+'.1)'});
+    mk(p,'ellipse',{cx,cy:0,rx:PRX(18),ry:PRY(18),fill:'#0A0C0F',stroke:W+'.3)'});});
+  // actuator
+  const act=node('act');
+  mk(act,'polygon',{points:diamond(...iso(cx,0,86,64),30,26),fill:'#262C33',stroke:W+'.3)'});
+  const [ax,ay]=iso(cx,0,86,64), [bx,by]=iso(cx,0,-30,-16);
+  mk(act,'polygon',{points:`${ax},${ay-5} ${bx},${by-8} ${bx+6},${by+2} ${ax+5},${ay+5}`,fill:'#303740',stroke:W+'.26)'});
+  mk(act,'circle',{cx:bx,cy:by-3,r:5,fill:PLAT});
+  // cover
+  const cov=node('cover');
+  mk(cov,'polygon',{points:diamond(cx,0,132,96),fill:'url(#s2c)',stroke:W+'.34)','stroke-width':1.2});
+  mk(cov,'polygon',{points:diamond(cx,0,120,85),fill:'none',stroke:W+'.16)','stroke-dasharray':'3 3'});
+  mk(cov,'polygon',{points:diamond(...iso(cx,0,-80,70),14,12),fill:'#1A1E24',stroke:FLUX,'stroke-width':1});
+  // callouts
+  const C=g.querySelector('.calls');
+  CALL.forEach((c,i)=>{const n=mk(C,'g',{class:'c c'+i,opacity:0});
+    const ex=c.side>0?502:38, an=c.side>0?'end':'start';
+    mk(n,'path',{class:'ld',d:'',fill:'none',stroke:W+'.42)','stroke-width':1});
+    mk(n,'circle',{class:'dot',cx:0,cy:0,r:2.6,fill:PLAT});
+    mk(n,'text',{x:ex,y:c.y-24,fill:PLAT,'font-family':'Archivo','font-size':16,'font-weight':600,
+      'text-anchor':an}).textContent=c.tx;
+    mk(n,'text',{x:ex,y:c.y-7,fill:STL,'font-family':'IBM Plex Mono','font-size':12.5,
+      'text-anchor':an}).textContent=c.sub;});
+ },
+ draw(t,g){
+  const p=ease(clamp(seg(t,1.0,4.2)));
+  const pos={};
+  LAYERS.forEach(L=>{const y=lerp(L.y0,L.y1,p); pos[L.k]=y;
+    const n=g.querySelector('.'+L.k);
+    n.setAttribute('transform',`translate(0 ${y.toFixed(1)})`);
+    n.setAttribute('opacity',clamp(seg(t,0,.8)));});
+  // spindle shaft through the stack
+  CALL.forEach((c,i)=>{const n=g.querySelector('.c'+i);
+    const a=clamp(seg(t,c.at,c.at+.7))*clamp(1-seg(t,c.at+7.4,c.at+8.2));
+    n.setAttribute('opacity',a);
+    if(a<=0)return;
+    const ty=pos[c.to], ax=270+(c.side>0?112:-112), ay=ty+(c.to==='cover'?-4:2), ex=c.side>0?502:38;
+    n.querySelector('.ld').setAttribute('d',
+      `M ${ax} ${ay.toFixed(1)} L ${(ax+c.side*30)} ${c.y} L ${ex} ${c.y}`);
+    n.querySelector('.dot').setAttribute('cx',ax); n.querySelector('.dot').setAttribute('cy',ay.toFixed(1));});
+ }};
+
+/* ===================== scene 3 — the air bearing ===================== */
+const SC3={
+ title:'It does not hover.<br>It flies.',
+ titleT:[0.6,6.0],
+ hud:t=>t<12.5?'fly height <b>15 nm</b> · pitch 120 µrad':'mean free path of air <b>66 nm</b>',
+ caps:[[0.5,'The spinning platter drags a boundary layer of air with it.'],
+       [4.6,'The slider’s air-bearing surface shapes that flow into a <em>pressure wedge</em>. Lift balances the suspension’s preload.'],
+       [9.2,'The head settles at about <k>15 nanometres</k> and holds there for years.'],
+       [13.4,'Scale the slider up to a jumbo jet and that is cruising <k>1.2 mm</k> above the runway.'],
+       [18.6,'At this gap air stops behaving like a fluid: a nitrogen molecule travels <k>66 nm</k> between collisions — four times the flying height.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <defs><linearGradient id="s3pr" x1="0" y1="1" x2="0" y2="0">
+    <stop offset="0" stop-color="${FLUX}" stop-opacity="0"/><stop offset="1" stop-color="${FLUX}" stop-opacity=".55"/></linearGradient></defs>
+  <g class="A">
+   <rect x="0" y="470" width="540" height="90" fill="#191D22"/>
+   <rect x="0" y="470" width="540" height="6" fill="#39414A"/>
+   <line x1="0" y1="470" x2="540" y2="470" stroke="${W}.5)" stroke-width="1.2"/>
+   <g class="hatch"></g>
+   <text x="36" y="548" fill="${STL}" font-family="IBM Plex Mono" font-size="12.5">platter surface · 35.8 m/s →</text>
+   <g class="flow"></g>
+   <path class="press" d="" fill="url(#s3pr)" opacity="0"/>
+   <g class="sl">
+    <polygon points="160,398 380,398 372,444 168,444" fill="#2B3139" stroke="${W}.42)" stroke-width="1.2"/>
+    <polygon points="168,444 206,444 206,452 170,452" fill="#454E58"/>
+    <polygon points="336,444 372,444 370,452 336,452" fill="#454E58"/>
+    <rect x="344" y="426" width="18" height="18" fill="${FLUX}" opacity=".85"/>
+    <path d="M270 398 L270 366 M244 366 L296 366" stroke="${W}.4)" stroke-width="1.4" fill="none"/>
+    <text x="392" y="418" fill="${PLAT}" font-family="Archivo" font-size="15" font-weight="600">slider</text>
+    <text x="392" y="436" fill="${STL}" font-family="IBM Plex Mono" font-size="12">0.85 mm</text>
+   </g>
+   <g class="gap" opacity="0">
+    <line x1="120" y1="452" x2="120" y2="470" stroke="${EMB}" stroke-width="1.4"/>
+    <line x1="113" y1="452" x2="127" y2="452" stroke="${EMB}" stroke-width="1.4"/>
+    <line x1="113" y1="470" x2="127" y2="470" stroke="${EMB}" stroke-width="1.4"/>
+    <text x="104" y="466" text-anchor="end" fill="${EMB}" font-family="IBM Plex Mono" font-size="15">15 nm</text>
+   </g>
+  </g>
+  <g class="B" opacity="0">
+   <text x="40" y="250" fill="${PLAT}" font-family="Archivo" font-size="19" font-weight="600">To scale</text>
+   <g class="bars"></g>
+   <g class="jet" opacity="0">
+    <path d="M60 596 L150 596 L188 584 L300 584 L316 596 L392 596 L400 604 L300 612 L150 612 L120 606 Z" fill="#2B3139" stroke="${W}.4)"/>
+    <path d="M196 584 L236 548 L262 548 L232 584 Z" fill="#242A31" stroke="${W}.3)"/>
+    <line x1="60" y1="628" x2="400" y2="628" stroke="${W}.45)" stroke-width="1.2"/>
+    <line x1="230" y1="612" x2="230" y2="628" stroke="${EMB}" stroke-width="1.4"/>
+    <text x="246" y="626" fill="${EMB}" font-family="IBM Plex Mono" font-size="14">1.2 mm</text>
+    <text x="60" y="660" fill="${STL}" font-family="IBM Plex Mono" font-size="12.5">70 m aircraft · same ratio</text>
+   </g>
+  </g>
+ </svg>`,
+ init(g){
+  const h=g.querySelector('.hatch');
+  for(let i=0;i<70;i++) mk(h,'line',{x1:i*9,y1:478,x2:i*9-7,y2:556,stroke:W+'.05)','stroke-width':1});
+  const f=g.querySelector('.flow');
+  for(let i=0;i<6;i++){const y=330+i*13;
+    mk(f,'path',{class:'fl',d:`M -20 ${y} C 120 ${y}, 150 ${y+ (i*4)}, 200 ${lerp(y,452-i*2.2,.55)} S 330 ${456-i*2}, 540 ${440-i*6}`,
+      fill:'none',stroke:W+(.10+i*.03)+')','stroke-width':1.1,'stroke-dasharray':'16 26'});}
+  const B=g.querySelector('.bars');
+  const items=[['human hair',70000],['grain of dust',10000],['smoke particle',1000],['flying height',15]];
+  items.forEach(([n,v],i)=>{const y=300+i*70, w=Math.max(5,(Math.log10(v)/Math.log10(70000))*380);
+    const r=mk(B,'rect',{class:'bb',x:40,y,width:0,height:16,fill:i===3?EMB:'#39414A'});
+    r.setAttribute('data-w',w.toFixed(1));
+    mk(B,'text',{x:40,y:y-9,fill:i===3?EMB:PLAT,'font-family':'Archivo','font-size':15,'font-weight':600}).textContent=n;
+    mk(B,'text',{x:40,y:y+35,fill:STL,'font-family':'IBM Plex Mono','font-size':12.5}).textContent=v.toLocaleString()+' nm';});
+ },
+ draw(t,g){
+  const A=g.querySelector('.A'), B=g.querySelector('.B');
+  const swap=seg(t,12.4,13.6);
+  A.setAttribute('opacity',1-swap); B.setAttribute('opacity',swap);
+  g.querySelectorAll('.fl').forEach((n,i)=>n.setAttribute('stroke-dashoffset',-t*(260+i*30)));
+  const lift=ease(seg(t,2.2,6.2));
+  g.querySelector('.sl').setAttribute('transform',`translate(0 ${lerp(28,0,lift).toFixed(2)})`);
+  const pp=seg(t,4.0,7.5);
+  const pr=g.querySelector('.press'); pr.setAttribute('opacity',pp*.9);
+  const pk=lerp(0,42,ease(pp));
+  pr.setAttribute('d',`M 168 470 C 220 ${470-pk*.35}, 280 ${470-pk*.75}, 340 ${470-pk} C 356 ${470-pk*.9}, 366 470, 372 470 Z`);
+  g.querySelector('.gap').setAttribute('opacity',seg(t,7.4,8.6));
+  g.querySelectorAll('.bb').forEach((n,i)=>{
+    const s=ease(seg(t,13.6+i*.75,14.5+i*.75));
+    n.setAttribute('width',(+n.getAttribute('data-w')||0)*s);});
+  g.querySelector('.jet').setAttribute('opacity',seg(t,17.4,18.4));
+ }};
+
+/* ===================== scene 4 — voice coil motor ===================== */
+const SC4={
+ title:'Positioning is a<br>Lorentz-force problem',
+ titleT:[0.6,5.4],
+ hud:t=>t<11.4?'B ≈ <b>0.6 T</b> · I ≤ <b>1 A</b> · F ≈ <b>0.3 N</b>':'track pitch <b>≈ 50 nm</b> · on-track <b>±3 nm</b>',
+ caps:[[0.5,'No gears, no lead screw. A flat coil sits in the field of two rare-earth magnets.'],
+       [4.8,'Current through the coil gives force: <k>F = B I L</k>. Reverse the current and the arm swings back.'],
+       [11.6,'A servo loop reads position codes written between the data and corrects thousands of times a second.'],
+       [16.6,'That is how a head stays inside a track <k>50 nanometres</k> wide while the disk runs at 120 revolutions a second.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <g class="A">
+   <path d="M 40 250 A 250 250 0 0 0 40 610" fill="none" stroke="${W}.16)" stroke-width="1.2"/>
+   <text x="48" y="246" fill="${STL}" font-family="IBM Plex Mono" font-size="12">platter edge</text>
+   <g class="mag"></g>
+   <g class="coil"></g>
+   <g class="ac">
+    <polygon points="352,424 150,420 148,440 352,436" fill="#2A3038" stroke="${W}.3)"/>
+    <polygon points="150,420 148,440 120,434 122,426" fill="${PLAT}"/>
+    <circle cx="360" cy="430" r="20" fill="#14161A" stroke="${W}.4)"/>
+    <circle cx="360" cy="430" r="6" fill="${W}.3)"/>
+   </g>
+   <g class="fv" opacity="0">
+    <line x1="470" y1="430" x2="470" y2="352" stroke="${EMB}" stroke-width="2.4"/>
+    <polygon points="470,340 464,356 476,356" fill="${EMB}"/>
+    <text x="482" y="356" fill="${EMB}" font-family="IBM Plex Mono" font-size="15">F</text>
+   </g>
+   <g class="eq" opacity="0">
+    <text x="40" y="676" fill="${PLAT}" font-family="IBM Plex Mono" font-size="26">F = B · I · L</text>
+    <text x="40" y="702" fill="${STL}" font-family="IBM Plex Mono" font-size="13">0.6 T × 1 A × 0.5 m of wire  ≈  0.3 N</text>
+   </g>
+  </g>
+  <g class="B" opacity="0">
+   <g class="trks"></g>
+   <path class="pes" d="" fill="none" stroke="${FLUX}" stroke-width="1.6"/>
+   <circle class="hdd" cx="270" cy="430" r="6" fill="${EMB}"/>
+   <text x="40" y="266" fill="${PLAT}" font-family="Archivo" font-size="19" font-weight="600">Closed-loop servo</text>
+   <text x="40" y="640" fill="${STL}" font-family="IBM Plex Mono" font-size="13">position error, corrected ~40,000×/s</text>
+   <g class="tp">
+    <line x1="436" y1="394" x2="436" y2="430" stroke="${EMB}" stroke-width="1.4"/>
+    <line x1="430" y1="394" x2="442" y2="394" stroke="${EMB}" stroke-width="1.4"/>
+    <line x1="430" y1="430" x2="442" y2="430" stroke="${EMB}" stroke-width="1.4"/>
+    <text x="450" y="416" fill="${EMB}" font-family="IBM Plex Mono" font-size="14">50 nm</text>
+   </g>
+  </g>
+ </svg>`,
+ init(g){
+  const M=g.querySelector('.mag'), C=g.querySelector('.coil'), px=360, py=430;
+  const arc=(r0,r1,a0,a1)=>{const P=(r,a)=>[px+Math.cos(a)*r,py+Math.sin(a)*r];
+    const A=P(r1,a0),Bp=P(r1,a1),Cp=P(r0,a1),D=P(r0,a0);
+    return `M${A} A${r1} ${r1} 0 0 1 ${Bp} L${Cp} A${r0} ${r0} 0 0 0 ${D} Z`;};
+  mk(M,'path',{d:arc(40,124,-0.62,0.62),fill:'#1B1F25',stroke:W+'.28)'});
+  for(let i=0;i<9;i++){const a=-0.5+i*0.125, r=54+((i%3)*26);
+    const x=px+Math.cos(a)*r, y=py+Math.sin(a)*r;
+    mk(M,'circle',{cx:x,cy:y,r:5,fill:'none',stroke:W+'.3)'});
+    mk(M,'line',{x1:x-3.4,y1:y-3.4,x2:x+3.4,y2:y+3.4,stroke:W+'.3)'});
+    mk(M,'line',{x1:x-3.4,y1:y+3.4,x2:x+3.4,y2:y-3.4,stroke:W+'.3)'});}
+  mk(M,'text',{x:px+66,y:py+152,fill:STL,'font-family':'IBM Plex Mono','font-size':12,'text-anchor':'middle'}).textContent='B into page';
+  mk(C,'path',{class:'cw',d:arc(58,104,-0.46,0.46),fill:'none',stroke:FLUX,'stroke-width':7,'stroke-dasharray':'10 12','stroke-linejoin':'round'});
+  const T=g.querySelector('.trks');
+  for(let i=0;i<7;i++){const y=322+i*36;
+    mk(T,'line',{x1:40,y1:y,x2:430,y2:y,stroke:W+(i===3?'.45)':'.14)'),'stroke-width':i===3?1.4:1,'stroke-dasharray':i===3?'none':'5 6'});}
+ },
+ draw(t,g){
+  const sw=seg(t,10.6,11.8);
+  g.querySelector('.A').setAttribute('opacity',1-sw);
+  g.querySelector('.B').setAttribute('opacity',sw);
+  const dir=Math.sin(t*0.9);
+  g.querySelector('.cw').setAttribute('stroke-dashoffset',-t*140*Math.sign(dir||1));
+  g.querySelector('.ac').setAttribute('transform',`rotate(${(-dir*11).toFixed(2)} 360 430)`);
+  g.querySelector('.fv').setAttribute('opacity',seg(t,3.6,4.6)*(.4+.6*Math.abs(dir)));
+  g.querySelector('.fv').setAttribute('transform',`scale(1 ${dir>0?1:-1}) translate(0 ${dir>0?0:-860})`);
+  g.querySelector('.eq').setAttribute('opacity',seg(t,4.6,5.8));
+  let d='', N=96;
+  for(let i=0;i<=N;i++){const x=40+i*(390/N), u=t*2.2+i*0.22;
+    const e=Math.sin(u)*4+Math.sin(u*2.7)*2.4+Math.sin(u*0.6)*3;
+    d+=(i?'L':'M')+x.toFixed(1)+' '+(430+e).toFixed(1)+' ';}
+  g.querySelector('.pes').setAttribute('d',d);
+  g.querySelector('.hdd').setAttribute('cy',430+Math.sin(t*2.2+96*0.22)*4);
+ }};
+
+/* ===================== scene 5 — writing and reading bits ===================== */
+const SC5={
+ title:'A bit is not a pole.<br>A bit is a change.',
+ titleT:[0.6,5.0],
+ hud:t=>t<14?'grain <b>≈ 8 nm</b> · ~18 grains per bit':'bit cell <b>50 × 13 nm</b> · 1.2 Tb/in²',
+ caps:[[0.5,'The film is a mosaic of cobalt-alloy grains about <k>8 nm</k> across — early media used cobalt-chromium-tantalum, today it is cobalt-chromium-platinum in an oxide matrix.'],
+       [6.4,'The write head is an electromagnet with a nanoscale gap. Current flips the magnetisation of a patch of grains.'],
+       [10.4,'A one is a <em>flux reversal</em>. A zero is the absence of one. The reader senses change, not direction.'],
+       [15.2,'Each bit needs roughly <k>18 grains</k>, because the signal has to average out the noise of the mosaic.'],
+       [21.0,'Stack it up: a bit cell <k>50 nm</k> along the track by <k>13 nm</k> across it. About a trillion bits per square inch.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <defs><linearGradient id="s5g" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#3B434D"/><stop offset="1" stop-color="#1C2026"/></linearGradient></defs>
+  <g class="A">
+   <g class="head">
+    <rect x="206" y="286" width="26" height="86" fill="#454E58" stroke="${W}.4)"/>
+    <rect x="262" y="286" width="58" height="86" fill="#333A43" stroke="${W}.3)"/>
+    <rect x="232" y="300" width="30" height="12" fill="#1C2026" stroke="${W}.2)"/>
+    <rect x="232" y="330" width="30" height="12" fill="#1C2026" stroke="${W}.2)"/>
+    <text x="196" y="278" text-anchor="end" fill="${PLAT}" font-family="Archivo" font-size="15" font-weight="600">write pole</text>
+    <path class="fld" d="M 219 372 C 219 402, 262 404, 291 396 L 291 372" fill="none" stroke="${FLUX}" stroke-width="1.6" stroke-dasharray="7 7"/>
+   </g>
+   <g class="grains"></g>
+   <rect x="30" y="454" width="480" height="4" fill="#2A313A"/>
+   <rect x="30" y="376" width="480" height="4" fill="${W}.22)"/>
+   <text x="30" y="474" fill="${STL}" font-family="IBM Plex Mono" font-size="12">soft underlayer</text>
+   <g class="wave">
+    <line x1="30" y1="580" x2="510" y2="580" stroke="${W}.16)"/>
+    <path class="wv" d="" fill="none" stroke="${PLAT}" stroke-width="1.8"/>
+    <g class="bits"></g>
+   </g>
+  </g>
+  <g class="B" opacity="0">
+   <text x="40" y="256" fill="${PLAT}" font-family="Archivo" font-size="19" font-weight="600">One bit cell</text>
+   <rect x="40" y="280" width="330" height="110" fill="none" stroke="${EMB}" stroke-width="1.4"/>
+   <g class="cellg"></g>
+   <text x="386" y="330" fill="${EMB}" font-family="IBM Plex Mono" font-size="14">13 nm</text>
+   <text x="386" y="350" fill="${EMB}" font-family="IBM Plex Mono" font-size="14">across</text>
+   <text x="40" y="416" fill="${STL}" font-family="IBM Plex Mono" font-size="14">50 nm along the track</text>
+   <text x="40" y="470" fill="${PLAT}" font-family="Archivo" font-size="19" font-weight="600">What the head flies over</text>
+   <g class="stack"></g>
+  </g>
+ </svg>`,
+ init(g){
+  const G=g.querySelector('.grains');
+  for(let i=0;i<34;i++){const x=30+i*14.1+(i%3)*1.2, w=12.4;
+    const r=mk(G,'rect',{class:'gr',x:x.toFixed(1),y:380,width:w,height:74,fill:'url(#s5g)',stroke:W+'.12)'});
+    r.setAttribute('data-i',i);
+    mk(G,'path',{class:'ga g'+i,d:`M ${(x+w/2).toFixed(1)} 444 L ${(x+w/2).toFixed(1)} 392`,stroke:FLUX,'stroke-width':1.6,'marker':''});
+    mk(G,'polygon',{class:'gh g'+i,points:`${(x+w/2-4).toFixed(1)},400 ${(x+w/2+4).toFixed(1)},400 ${(x+w/2).toFixed(1)},388`,fill:FLUX});}
+  const Bt=g.querySelector('.bits');
+  for(let i=0;i<12;i++) mk(Bt,'text',{class:'bt',x:44+i*40,y:616,fill:STL,'font-family':'IBM Plex Mono','font-size':15}).textContent='0';
+  const C=g.querySelector('.cellg');
+  for(let i=0;i<18;i++){const cx=52+(i%6)*54, cy=296+Math.floor(i/6)*34;
+    mk(C,'rect',{x:cx,y:cy,width:44,height:26,fill:'#252B33',stroke:W+'.16)'});
+    mk(C,'polygon',{points:`${cx+18},${cy+22} ${cx+26},${cy+22} ${cx+22},${cy+5}`,fill:FLUX,opacity:.85});}
+  const S=g.querySelector('.stack');
+  [['lubricant','1 nm','#2B323A'],['carbon overcoat','2.5 nm','#343C45'],
+   ['CoCrPt-oxide recording film','12 nm','#4A535E'],['Ru interlayer','6 nm','#2E353D'],
+   ['soft underlayer (FeCoB)','25 nm','#3A424B'],['Al-Mg substrate','0.635 mm','#1E2229']].forEach((r,i)=>{
+    const y=496+i*34;
+    mk(S,'rect',{x:40,y,width:300,height:28,fill:r[2],stroke:W+'.16)'});
+    mk(S,'text',{x:52,y:y+19,fill:PLAT,'font-family':'Archivo','font-size':13.5,'font-weight':500}).textContent=r[0];
+    mk(S,'text',{x:352,y:y+19,fill:STL,'font-family':'IBM Plex Mono','font-size':12.5}).textContent=r[1];});
+ },
+ draw(t,g){
+  const sw=seg(t,13.4,14.8);
+  g.querySelector('.A').setAttribute('opacity',1-sw);
+  g.querySelector('.B').setAttribute('opacity',sw);
+  const hx=lerp(-190,330,clamp(seg(t,2.0,11.0)));
+  g.querySelector('.head').setAttribute('transform',`translate(${hx.toFixed(1)} 0)`);
+  g.querySelector('.fld').setAttribute('stroke-dashoffset',-t*90);
+  const PAT=[1,0,0,1,0,1,1,0,0,0,1,0,1,1,0,0,1,0,0,1,0,1,0,0,1,1,0,0,0,1,0,1,1,0];
+  const front=(hx+219-30)/14.1;
+  let s=1; const pols=[];
+  for(let i=0;i<34;i++){ if(PAT[i])s=-s; pols.push(s); }
+  for(let i=0;i<34;i++){
+    const written=i<front, p=written?pols[i]:1;
+    const a=g.querySelector('.ga.g'+i), h=g.querySelector('.gh.g'+i);
+    const cxv=30+i*14.1+(i%3)*1.2+6.2;
+    a.setAttribute('transform',p>0?'':`rotate(180 ${cxv.toFixed(1)} 417)`);
+    h.setAttribute('transform',p>0?'':`rotate(180 ${cxv.toFixed(1)} 417)`);
+    a.setAttribute('stroke',written?(p>0?FLUX:'#C9532B'):W+'.25)');
+    h.setAttribute('fill',written?(p>0?FLUX:'#C9532B'):W+'.25)');
+  }
+  let d='';
+  for(let i=0;i<34;i++){const x=30+i*14.1, w=(i<front);
+    const y=580-(w&&PAT[i]?26*(pols[i]>0?1:-1):0);
+    d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' '+'L'+(x+14).toFixed(1)+' '+y.toFixed(1)+' ';}
+  g.querySelector('.wv').setAttribute('d',d);
+  g.querySelectorAll('.bt').forEach((n,i)=>{const on=(i*2.7)<front;
+    n.textContent=PAT[Math.floor(i*2.7)]?'1':'0';
+    n.setAttribute('opacity',on?1:0); n.setAttribute('fill',PAT[Math.floor(i*2.7)]?PLAT:STL);});
+ }};
+
+/* ===================== scene 6 — GMR / TMR read head ===================== */
+const SC6={
+ title:'Reading is<br>quantum mechanics',
+ titleT:[0.6,5.2],
+ hud:'parallel → low R · antiparallel → high R',
+ caps:[[0.5,'The sensor is a sandwich. One magnetic layer is pinned in place. One is free to turn.'],
+       [5.0,'The field from the bit below rotates the free layer, electron scattering changes — and so does the <em>resistance</em> of the whole stack.'],
+       [10.6,'Giant magnetoresistance won Fert and Grünberg the 2007 Nobel Prize in Physics.'],
+       [14.6,'Modern heads go further: electrons tunnel through a magnesium-oxide barrier for more than ten times the signal.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <g class="stk">
+   <rect class="Ly l0" x="140" y="248" width="250" height="32" fill="#1A1E24" stroke="${W}.22)"/>
+   <rect class="Ly l1" x="140" y="286" width="250" height="48" fill="#4B5764" stroke="${W}.34)"/>
+   <rect class="Ly l2" x="140" y="340" width="250" height="16" fill="#8E99A6" stroke="${W}.4)"/>
+   <rect class="Ly l3" x="140" y="362" width="250" height="48" fill="#30383F" stroke="${W}.34)"/>
+   <rect class="Ly l4" x="140" y="416" width="250" height="32" fill="#15191E" stroke="${W}.22)"/>
+   <g class="fa"><line x1="222" y1="310" x2="296" y2="310" stroke="${FLUX}" stroke-width="3"/>
+     <polygon points="308,310 294,303 294,317" fill="${FLUX}"/></g>
+   <line x1="222" y1="386" x2="296" y2="386" stroke="${PLAT}" stroke-width="3"/>
+   <polygon points="308,386 294,379 294,393" fill="${PLAT}"/>
+   <text x="406" y="270" fill="${STL}" font-family="Archivo" font-size="14">shield</text>
+   <text x="406" y="316" fill="${PLAT}" font-family="Archivo" font-size="14" font-weight="600">free layer</text>
+   <text class="bar" x="406" y="353" fill="${PLAT}" font-family="Archivo" font-size="14" font-weight="600">MgO barrier</text>
+   <text x="406" y="392" fill="${PLAT}" font-family="Archivo" font-size="14" font-weight="600">pinned layer</text>
+   <text x="406" y="437" fill="${STL}" font-family="Archivo" font-size="14">antiferromagnet</text>
+  </g>
+  <g class="el"></g>
+  <g class="disk">
+   <rect x="140" y="520" width="250" height="56" fill="#22272E" stroke="${W}.22)"/>
+   <text x="406" y="553" fill="${STL}" font-family="Archivo" font-size="14">bit on the platter</text>
+   <g class="ba"><line x1="265" y1="562" x2="265" y2="534" stroke="${FLUX}" stroke-width="3"/>
+     <polygon points="265,524 259,538 271,538" fill="${FLUX}"/></g>
+   <path class="ff" d="M 265 520 C 265 490, 265 470, 265 412" fill="none" stroke="${FLUX}" stroke-width="1.2" stroke-dasharray="5 8" opacity=".7"/>
+  </g>
+  <g class="rr">
+   <text x="40" y="266" fill="${PLAT}" font-family="Archivo" font-size="15" font-weight="600">R</text>
+   <rect x="40" y="276" width="18" height="172" fill="#1A1E24" stroke="${W}.2)"/>
+   <rect class="rb" x="40" y="448" width="18" height="0" fill="${EMB}"/>
+   <text class="rv" x="40" y="474" fill="${EMB}" font-family="IBM Plex Mono" font-size="13">low</text>
+  </g>
+  <g class="dr" opacity="0">
+   <text x="40" y="660" fill="${PLAT}" font-family="IBM Plex Mono" font-size="22">ΔR / R</text>
+   <text x="40" y="688" fill="${STL}" font-family="IBM Plex Mono" font-size="14">GMR, copper spacer   ≈ 10 %</text>
+   <text x="40" y="710" fill="${PLAT}" font-family="IBM Plex Mono" font-size="14">TMR, MgO barrier    &gt; 100 %</text>
+  </g>
+ </svg>`,
+ init(g){
+  const E=g.querySelector('.el');
+  for(let i=0;i<7;i++) mk(E,'circle',{class:'e e'+i,cx:265,cy:250,r:4.2,fill:PLAT,opacity:0});
+ },
+ draw(t,g){
+  g.querySelectorAll('.Ly').forEach((n,i)=>n.setAttribute('opacity',ease(clamp(seg(t,0.4+i*0.35,1.4+i*0.35)))));
+  const par = Math.sin(t*0.72)>0;            // bit polarity
+  const sw  = clamp(seg(t,4.4,5.2));
+  g.querySelector('.disk').setAttribute('opacity',sw);
+  g.querySelector('.ba').setAttribute('transform',par?'':'rotate(180 265 548)');
+  g.querySelector('.fa').setAttribute('transform',par?'':'rotate(180 265 310)');
+  g.querySelector('.ff').setAttribute('stroke-dashoffset',-t*40);
+  const R=par?0.22:0.92;
+  const rb=g.querySelector('.rb'), h=172*lerp(0.18,0.95,R);
+  rb.setAttribute('height',h.toFixed(1)); rb.setAttribute('y',(448-h).toFixed(1));
+  rb.setAttribute('fill',par?FLUX:EMB);
+  const rv=g.querySelector('.rv'); rv.textContent=par?'low R':'high R'; rv.setAttribute('fill',par?FLUX:EMB);
+  g.querySelectorAll('.e').forEach((n,i)=>{
+    const u=((t*0.55)+i/7)%1, y=lerp(244,452,u);
+    n.setAttribute('cy',y.toFixed(1));
+    const inBar = y>286 && y<412;
+    const jit = (!par&&inBar)? Math.sin(t*22+i*2)*16 : Math.sin(t*4+i)*2;
+    n.setAttribute('cx',(265+jit).toFixed(1));
+    n.setAttribute('fill',(!par&&inBar)?EMB:PLAT);
+    n.setAttribute('opacity',clamp(seg(t,7.0,8.0))*(0.55+0.45*Math.sin(u*Math.PI)));});
+  g.querySelector('.dr').setAttribute('opacity',seg(t,14.2,15.4));
+  g.querySelector('.bar').setAttribute('fill',t>14.6?PLAT:STL);
+ }};
+
+/* ===================== scene 7 — pushing density ===================== */
+const SC7={
+ title:'Four ways past<br>the same wall',
+ titleT:[0.6,4.4],
+ hud:t=>t<7?'thermal limit · <b>Ku·V / kB·T ≥ 60</b>':t<14?'perpendicular · 2005':t<21?'shingled · overlapping tracks':'HAMR · <b>450 °C</b> for &lt;1 ns',
+ caps:[[0.4,'Density has a wall. Shrink a grain far enough and ordinary room-temperature heat erases it.'],
+       [4.0,'Stability means anisotropy times volume must beat thermal energy by a factor of about sixty.'],
+       [7.4,'So the bits were stood upright. <em>Perpendicular recording</em>, with a soft underlayer closing the magnetic circuit and doubling the write field.'],
+       [14.4,'Then shingled recording. The reader is narrower than the writer, so tracks can overlap like roof tiles — at the price of rewriting a whole band at a time.'],
+       [21.4,'And <u>HAMR</u>: a laser and a plasmonic antenna heat iron-platinum past <u>450 °C</u> for under a nanosecond, so a far harder grain can be written — then frozen in place.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <g class="A">
+   <text x="40" y="300" fill="${PLAT}" font-family="Archivo" font-size="18" font-weight="600">Longitudinal — bits lie flat</text>
+   <rect x="40" y="340" width="440" height="80" fill="#1C2026" stroke="${W}.18)"/>
+   <g class="lb"></g>
+   <text x="40" y="520" fill="${PLAT}" font-family="IBM Plex Mono" font-size="21">Ku · V / kB · T  ≥  60</text>
+   <text x="40" y="548" fill="${STL}" font-family="IBM Plex Mono" font-size="13">shrink V and the inequality fails — grains flip on their own</text>
+  </g>
+  <g class="B" opacity="0">
+   <text x="40" y="300" fill="${PLAT}" font-family="Archivo" font-size="18" font-weight="600">Perpendicular — bits stand up</text>
+   <rect x="40" y="336" width="440" height="72" fill="#1C2026" stroke="${W}.18)"/>
+   <rect x="40" y="408" width="440" height="34" fill="#39414A" stroke="${W}.24)"/>
+   <text x="48" y="430" fill="${PLAT}" font-family="IBM Plex Mono" font-size="12.5">soft underlayer — the field’s return path</text>
+   <g class="pb"></g>
+   <rect class="wp" x="240" y="288" width="22" height="46" fill="#5A6470" stroke="${W}.35)"/>
+   <text x="40" y="500" fill="${STL}" font-family="IBM Plex Mono" font-size="13">taller grain, same footprint → volume back, stability back</text>
+  </g>
+  <g class="C" opacity="0">
+   <text x="40" y="288" fill="${PLAT}" font-family="Archivo" font-size="18" font-weight="600">Shingled — tracks overlap</text>
+   <g class="sh"></g>
+   <g class="hds">
+    <rect x="446" y="330" width="54" height="34" fill="#5A6470" stroke="${W}.4)"/>
+    <text x="446" y="322" fill="${PLAT}" font-family="IBM Plex Mono" font-size="12">writer</text>
+    <rect x="446" y="452" width="54" height="11" fill="${EMB}"/>
+    <text x="446" y="444" fill="${EMB}" font-family="IBM Plex Mono" font-size="12">reader</text>
+   </g>
+   <text x="40" y="560" fill="${STL}" font-family="IBM Plex Mono" font-size="13">only the last-written strip survives — enough for the narrow reader</text>
+  </g>
+  <g class="D" opacity="0">
+   <text x="40" y="288" fill="${PLAT}" font-family="Archivo" font-size="18" font-weight="600">HAMR — heat, write, freeze</text>
+   <path class="cone" d="M 262 332 L 278 332 L 296 420 L 244 420 Z" fill="${EMB}" opacity="0"/>
+   <polygon points="256,304 284,304 270,332" fill="#8E99A6" stroke="${W}.4)"/>
+   <text x="300" y="316" fill="${STL}" font-family="IBM Plex Mono" font-size="12">near-field transducer</text>
+   <rect x="40" y="420" width="440" height="76" fill="#12161A" stroke="${W}.18)"/>
+   <g class="fe"></g>
+   <text class="temp" x="40" y="560" fill="${EMB}" font-family="IBM Plex Mono" font-size="21">25 °C</text>
+   <text x="40" y="588" fill="${STL}" font-family="IBM Plex Mono" font-size="13">FePt · Ku ≈ 10× CoCrPt · cools in under a nanosecond</text>
+  </g>
+ </svg>`,
+ init(g){
+  const L=g.querySelector('.lb');
+  for(let i=0;i<14;i++){const x=52+i*31;
+    mk(L,'g',{class:'lbi i'+i}).innerHTML=
+      `<line x1="${x}" y1="380" x2="${x+20}" y2="380" stroke="${FLUX}" stroke-width="3"/>`+
+      `<polygon points="${x+24},380 ${x+14},375 ${x+14},385" fill="${FLUX}"/>`;}
+  const P=g.querySelector('.pb');
+  for(let i=0;i<20;i++){const x=54+i*21.5, up=i%3!==1;
+    mk(P,'g',{class:'pbi i'+i}).innerHTML=
+      `<line x1="${x}" y1="398" x2="${x}" y2="352" stroke="${up?FLUX:'#C9532B'}" stroke-width="3"/>`+
+      `<polygon points="${x},344 ${x-5},356 ${x+5},356" fill="${up?FLUX:'#C9532B'}"/>`;}
+  const S=g.querySelector('.sh');
+  for(let i=0;i<5;i++){const y=320+i*34;
+    mk(S,'rect',{class:'tk t'+i,x:68,y,width:372,height:56,fill:'#171B20',stroke:W+'.26)',opacity:0});
+    mk(S,'rect',{class:'tv v'+i,x:68,y,width:372,height:32,fill:i===4?'#65727F':'#525E6B',opacity:0});
+    mk(S,'text',{class:'tn n'+i,x:44,y:y+22,fill:STL,'font-family':'IBM Plex Mono','font-size':13,opacity:0}).textContent=i+1;}
+  const F=g.querySelector('.fe');
+  for(let i=0;i<16;i++) mk(F,'rect',{class:'fg f'+i,x:48+i*27,y:428,width:22,height:60,fill:'#20262D',stroke:W+'.2)'});
+ },
+ draw(t,g){
+  const beats=[[0,7],[7,14],[14,21],[21,28]], names=['A','B','C','D'];
+  names.forEach((k,i)=>{const [a,b]=beats[i];
+    const fin = i===0 ? clamp(seg(t,0.2,1.0)) : clamp(seg(t,a,a+0.5));
+    const fout = i<3 ? 1-clamp(seg(t,b-0.5,b)) : 1;
+    g.querySelector('.'+k).setAttribute('opacity',(fin*fout).toFixed(3));});
+  // A : shrink, then random flips
+  const sh=lerp(1,0.44,ease(seg(t,1.6,4.2)));
+  g.querySelector('.lb').setAttribute('transform',`translate(270 380) scale(${sh.toFixed(3)} 1) translate(-270 -380)`);
+  g.querySelectorAll('.lbi').forEach((n,i)=>{
+    const chaotic=t>4.2 && ((i*7)%5===0);
+    const f=chaotic && Math.sin(t*9+i*2.3)>0;
+    n.setAttribute('transform',f?`rotate(180 ${52+i*31+12} 380)`:'');
+    n.setAttribute('opacity',chaotic&&f?0.75:1);});
+  // B : stand up + write pole sweep
+  const bt=t-7;
+  g.querySelector('.wp').setAttribute('transform',`translate(${(Math.sin(bt*0.8)*150).toFixed(1)} 0)`);
+  g.querySelectorAll('.pbi').forEach((n,i)=>n.setAttribute('opacity',clamp(seg(bt,0.6+i*0.06,1.2+i*0.06))));
+  // C : shingles laid down one at a time
+  const ct=t-14;
+  g.querySelectorAll('.tk').forEach((n,i)=>n.setAttribute('opacity',clamp(seg(ct,0.8+i*0.9,1.5+i*0.9))));
+  g.querySelectorAll('.tv').forEach((n,i)=>n.setAttribute('opacity',clamp(seg(ct,1.0+i*0.9,1.7+i*0.9))));
+  g.querySelectorAll('.tn').forEach((n,i)=>n.setAttribute('opacity',clamp(seg(ct,0.8+i*0.9,1.4+i*0.9))));
+  const hy=lerp(320,456,clamp(seg(ct,0.8,5.3)));
+  g.querySelector('.hds').setAttribute('transform',`translate(0 ${(hy-330).toFixed(1)})`);
+  // D : heat one grain, flip it, cool it
+  const dt=t-21, cyc=clamp(seg(dt,1.2,5.6)), idx=Math.min(15,Math.floor(cyc*16));
+  const nft=48+idx*27+11;
+  g.querySelector('.cone').setAttribute('transform',`translate(${(nft-270).toFixed(1)} 0)`);
+  g.querySelector('.cone').setAttribute('opacity',clamp(seg(dt,1.0,1.6))*(0.11+0.06*Math.sin(t*14)));
+  g.querySelector('.D').querySelector('polygon').setAttribute('transform',`translate(${(nft-270).toFixed(1)} 0)`);
+  let T=25;
+  g.querySelectorAll('.fg').forEach((n,i)=>{
+    const d=Math.abs(i-idx), hot=Math.max(0,1-d*0.55);
+    if(i===idx)T=lerp(25,470,hot);
+    n.setAttribute('fill', i<idx?'#33414F' : hot>0.05?`rgb(${Math.round(lerp(32,255,hot))},${Math.round(lerp(38,122,hot))},${Math.round(lerp(45,47,hot))})`:'#20262D');});
+  g.querySelector('.temp').textContent=Math.round(T)+' °C';
+ }};
+
+/* ===================== scene 8 — close ===================== */
+const SC8={
+ title:'',
+ titleT:[0,0],
+ hud:'',
+ caps:[[0.0,'Seventy years of engineering, in a box the size of a paperback.'],
+       [4.8,'Thirty-six metres a second. Fifteen nanometres apart. Five years without ever touching.'],
+       [10.2,'Marine Express — engineering, explained.']],
+ html:`<svg viewBox="0 0 540 960" preserveAspectRatio="xMidYMid meet">
+  <defs><linearGradient id="s8c" x1="0" y1="0" x2="1" y2="1">
+   <stop offset="0" stop-color="#2E343B"/><stop offset="1" stop-color="#13161A"/></linearGradient>
+   <linearGradient id="s8p" x1="0" y1="0" x2="1" y2="1">
+   <stop offset="0" stop-color="#4A525B"/><stop offset=".45" stop-color="#252A31"/><stop offset="1" stop-color="#3A414A"/></linearGradient></defs>
+  <g class="asm"></g>
+  <g class="fig" opacity="0"></g>
+ </svg>`,
+ init(g){
+  const A=g.querySelector('.asm'), cx=270, cy=330;
+  const L=[['pcb',96,'#10151A'],['base',66,'url(#s8c)'],['p2',34,'url(#s8p)'],
+           ['p1',14,'url(#s8p)'],['p0',-6,'url(#s8p)'],['cover',-64,'url(#s8c)']];
+  L.forEach(([k,off,fill])=>{const n=mk(A,'g',{class:'AL '+k,'data-off':off});
+    if(k[0]==='p'&&k!=='pcb'){mk(n,'ellipse',{cx,cy,rx:PRX(84),ry:PRY(84),fill,stroke:W+'.32)'});
+      mk(n,'ellipse',{cx,cy,rx:PRX(16),ry:PRY(16),fill:'#0A0C0F',stroke:W+'.28)'});}
+    else mk(n,'polygon',{points:diamond(cx,cy,116,84),fill,stroke:W+'.3)'});});
+  const F=g.querySelector('.fig');
+  [['7,200 rpm','spindle'],['35.8 m/s','surface speed at the rim'],['15 nm','flying height'],
+   ['8 nm','grain diameter'],['50 nm','track pitch'],['1.2 Tb/in²','areal density']].forEach((r,i)=>{
+    const y=520+i*40;
+    mk(F,'text',{class:'fr','data-i':i,x:40,y,fill:PLAT,'font-family':'IBM Plex Mono','font-size':20}).textContent=r[0];
+    mk(F,'text',{class:'fr','data-i':i,x:212,y,fill:STL,'font-family':'Archivo','font-size':14}).textContent=r[1];
+    mk(F,'line',{class:'fr','data-i':i,x1:40,y1:y+10,x2:460,y2:y+10,stroke:W+'.1)'});});
+ },
+ draw(t,g){
+  const p=ease(clamp(seg(t,0.4,4.0)));
+  g.querySelectorAll('.AL').forEach(n=>{
+    const off=+n.getAttribute('data-off');
+    n.setAttribute('transform',`translate(0 ${(off*2.6*(1-p)+off*0.42*p).toFixed(1)})`);
+    n.setAttribute('opacity',lerp(0.55,1,p));});
+  g.querySelector('.asm').setAttribute('transform',`translate(270 330) scale(${lerp(1,0.92,p)}) translate(-270 -330)`);
+  const f=g.querySelector('.fig'); f.setAttribute('opacity',1);
+  g.querySelectorAll('.fr').forEach(n=>{
+    const i=+n.getAttribute('data-i');
+    n.setAttribute('opacity',ease(clamp(seg(t,4.4+i*0.42,5.1+i*0.42))));});
+ }};
+
+/* ===================== assemble ===================== */
+const SCENES=[
+ {n:'Cold open',            d:16, s:SC1},
+ {n:'Component anatomy',    d:26, s:SC2},
+ {n:'The air bearing',      d:24, s:SC3},
+ {n:'Voice coil motor',     d:22, s:SC4},
+ {n:'Writing bits',         d:30, s:SC5},
+ {n:'Reading bits',         d:20, s:SC6},
+ {n:'Pushing density',      d:28, s:SC7},
+ {n:'Close',                d:14, s:SC8}
+];
+let acc=0; SCENES.forEach(S=>{S.t0=acc; acc+=S.d; S.t1=acc;});
+
+/* ===================== player ===================== */
+const stage=el('stage'), host=el('scenes'), tick=el('ticker'),
+      capEl=el('cap').firstElementChild, titleEl=el('stitle'), hudEl=el('hud');
+SCENES.forEach((S,i)=>{
+  const d=document.createElement('div'); d.className='scene'; d.innerHTML=S.s.html;
+  host.appendChild(d); S.el=d; S.s.init && S.s.init(d);
+  const b=document.createElement('i'); tick.appendChild(b); S.bar=b;
+});
+let T=0, playing=false, last=0, cur=-1, capKey='';
+function render(){
+  let i=SCENES.findIndex(S=>T<S.t1); if(i<0)i=SCENES.length-1;
+  const S=SCENES[i], lt=T-S.t0;
+  if(i!==cur){SCENES.forEach((X,j)=>X.el.classList.toggle('on',j===i)); cur=i;
+    el('ebL').textContent=String(i+1).padStart(2,'0')+' / 08';
+    el('ebR').textContent=S.n;}
+  S.s.draw(lt,S.el);
+  SCENES.forEach((X,j)=>X.bar.style.setProperty('--p', j<i?1 : j>i?0 : (lt/X.d).toFixed(3)));
+  const ti=S.s.titleT, on=ti[1]>ti[0] && lt>=ti[0] && lt<=ti[1];
+  titleEl.innerHTML=S.s.title||''; titleEl.classList.toggle('on',on);
+  titleEl.style.opacity = on ? clamp(seg(lt,ti[0],ti[0]+.5))*(1-clamp(seg(lt,ti[1]-.6,ti[1]))) : 0;
+  const h=typeof S.s.hud==='function'?S.s.hud(lt):S.s.hud; hudEl.innerHTML=h||'';
+  let c=''; for(const k of S.s.caps){ if(lt>=k[0]) c=k[1]; }
+  el('cap').style.opacity = c ? 1 : 0;
+  const key=i+'|'+c;
+  if(key!==capKey){capKey=key; capEl.innerHTML=c;
+    capEl.animate([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'none'}],{duration:340,easing:'cubic-bezier(.2,.7,.3,1)'});}
+  el('fill').style.width=(T/DUR*100)+'%';
+  el('tc').textContent=fmt(T)+' / 3:00';
+  el('scrub').setAttribute('aria-valuenow',T.toFixed(0));
+}
+function loop(ts){ if(!playing)return;
+  if(!last)last=ts; T+=Math.min(.1,(ts-last)/1000); last=ts;
+  if(T>=DUR){T=DUR; playing=false; el('play').textContent='Replay';}
+  render(); requestAnimationFrame(loop);
+}
+function play(){ if(T>=DUR)T=0; playing=true; last=0; el('play').textContent='Pause'; requestAnimationFrame(loop);}
+function pause(){ playing=false; el('play').textContent='Play';}
+el('play').onclick=()=>playing?pause():play();
+el('restart').onclick=()=>{T=0;render();play();};
+const sc=el('scrub');
+const setFromX=e=>{const r=sc.getBoundingClientRect();
+  T=clamp(((e.touches?e.touches[0].clientX:e.clientX)-r.left)/r.width)*DUR; render();};
+let drag=false;
+sc.addEventListener('pointerdown',e=>{drag=true;sc.setPointerCapture(e.pointerId);setFromX(e);});
+sc.addEventListener('pointermove',e=>{if(drag)setFromX(e);});
+sc.addEventListener('pointerup',()=>drag=false);
+sc.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'){T=clamp(T+2,0,DUR);render();e.preventDefault();}
+  if(e.key==='ArrowLeft'){T=clamp(T-2,0,DUR);render();e.preventDefault();}
+  if(e.key===' '){playing?pause():play();e.preventDefault();}});
+SCENES.forEach(S=>{const m=document.createElement('div');m.className='mark';
+  m.style.left=(S.t0/DUR*100)+'%'; sc.appendChild(m);});
+const cs=el('cleanstage');
+el('cleanbtn').onclick=()=>{document.body.classList.add('clean');cs.appendChild(stage);if(!playing){T=0;play();}};
+el('exit').onclick=()=>{document.body.classList.remove('clean');el('stage')&&document.querySelector('.player').insertBefore(stage,document.querySelector('.player').firstChild);};
+render();
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches) play();
+
+/* ===================== script + storyboard ===================== */
+const SB=[
+ {vo:`A disk of aluminium-magnesium alloy, ninety-five millimetres across, turning seven thousand two hundred times a minute. At the rim the surface is travelling at thirty-five point eight metres per second — faster than a car on a motorway. And riding above it, closer than a particle of smoke, is a sensor that never touches it.`,
+  notes:[['Open','Black frame. Platter fades up from 86% scale over 1.8 s, already spinning. No cut.'],
+   ['Motion','Radial tick group rotates continuously at 255°/s — a deliberate slow-down of the true 43,200°/s so the eye can read texture instead of blur.'],
+   ['02–05 s','Actuator arm swings in from the park ramp at frame-right and settles mid-radius. Head dot pulses.'],
+   ['06 s','Dimension rule and “95 mm platter” fade in under the disk.'],
+   ['HUD','RPM and rim-speed counters roll up from zero over the first 4.5 s, then hold.']],
+  math:`v = π · D · N / 60\n<i>  = π × 0.095 m × 7200 / 60  =  35.8 m/s</i>\n<i>one full rotation: 8.33 ms</i>`},
+
+ {vo:`Inside the casting: platters of aluminium-magnesium alloy, ground flat and sputtered with magnetic film. A spindle motor. An actuator arm carrying the heads, swung by a voice coil motor. It is not a vacuum. A gasket seals it, a breather filter equalises pressure, and a recirculating filter scrubs the air for the life of the drive. Underneath sits the board: controller, cache and the SATA interface.`,
+  notes:[['Build','Seven layers separate from a single collapsed stack between 1.0 s and 4.2 s on a cubic ease. Dimetric projection throughout (x′ = (X−Z)·0.94, y′ = (X+Z)·0.34), so circular platters project to axis-aligned ellipses.'],
+   ['Callouts','Seven leader-line labels appear 2.5 s apart and each retires after 7.4 s, so no more than three are on screen at once.'],
+   ['Emphasis','Breather filter port is the only element outlined in blue — it is the counter-intuitive fact of the sequence and needs to be found instantly.'],
+   ['Hold','Stack stays exploded through the end of the sequence; do not reassemble here, that beat belongs to the close.']],
+  math:`<i>typical 3.5-inch drive</i>\n3 platters  ·  6 heads  ·  1 actuator\nplatter thickness   0.635 mm\ninternal pressure   1 atm, filtered`},
+
+ {vo:`The spinning platter drags a boundary layer of air with it. The slider's air-bearing surface shapes that flow into a pressure wedge. Lift balances the suspension's preload, and the head settles at about fifteen nanometres and holds there for years. Scale the slider up to a jumbo jet and that is cruising one point two millimetres above the runway. At this gap air stops behaving like a fluid: a nitrogen molecule travels sixty-six nanometres between collisions — four times the flying height.`,
+  notes:[['Cut','Hard cut from top-down to a side-on cross-section. Platter surface runs full-bleed; hatch marks establish direction of travel.'],
+   ['02–06 s','Slider descends 28 px as lift builds. Streamlines are dashed paths with a continuously decreasing dash-offset — never loop them visibly.'],
+   ['04–08 s','Pressure wedge fills under the slider, peaking toward the trailing edge where the read/write element sits.'],
+   ['07 s','Orange dimension callout: 15 nm. Orange is used here and only here in the first half, so the eye goes straight to it.'],
+   ['13 s','Crossfade to the scale board. Four bars grow left-to-right, 0.75 s apart, on a log axis.'],
+   ['18 s','Aircraft silhouette with the same ratio drawn as a ground clearance.']],
+  math:`fly height / slider length = 15 nm / 0.85 mm = 1.8 × 10⁻⁵\n<i>applied to a 70 m airframe  →  1.2 mm clearance</i>\n\nKnudsen number Kn = λ / h = 66 / 15 ≈ 4.4\n<i>Kn » 1: rarefied flow, not continuum — the bearing must be\nsolved with a modified Reynolds equation, not Navier-Stokes</i>`},
+
+ {vo:`No gears, no lead screw. A flat coil sits in the field of two rare-earth magnets. Current through the coil gives force: F equals B I L. Reverse the current and the arm swings back. A servo loop reads position codes written between the data and corrects thousands of times a second. That is how a head stays inside a track fifty nanometres wide while the disk runs at a hundred and twenty revolutions a second.`,
+  notes:[['Frame','Back to top-down, but now the camera sits over the actuator rather than the platter. Platter edge is a single arc at frame-left for orientation.'],
+   ['Field','Magnet sector carries ⊗ glyphs — field into the page. Coil is drawn as a dashed annular sector; dash-offset direction reverses with the current.'],
+   ['Force','Orange F vector flips with the sine driver so the causal chain reads: current reverses → force reverses → arm reverses.'],
+   ['04.6 s','Equation card lands bottom-left and stays.'],
+   ['11 s','Crossfade to the servo view: seven track lines, live position-error trace in blue, orange 50 nm track-pitch dimension.']],
+  math:`F = B · I · L\n<i>  ≈ 0.6 T × 1 A × 0.5 m of conductor  ≈  0.3 N</i>\n\nfull-stroke seek   < 10 ms\nservo sample rate  ≈ 40 kHz\non-track error     ±3 nm (1σ)`},
+
+ {vo:`The film is a mosaic of cobalt-alloy grains about eight nanometres across — early media used cobalt-chromium-tantalum, today it is cobalt-chromium-platinum in an oxide matrix. The write head is an electromagnet with a nanoscale gap. Current flips the magnetisation of a patch of grains. A one is a flux reversal. A zero is the absence of one — the reader senses change, not direction. Each bit needs roughly eighteen grains, because the signal has to average out the noise of the mosaic. Stack it up: a bit cell fifty nanometres along the track by thirteen across. About a trillion bits per square inch.`,
+  notes:[['Frame','Cross-section again, zoomed to film scale. Grains are discrete columns, not a continuous band — the granularity is the point.'],
+   ['02–11 s','Write head tracks left to right. Grains behind it snap to the encoded pattern; grains ahead stay neutral grey. Down-magnetised grains take the dulled orange, up take blue.'],
+   ['Waveform','Readback trace builds underneath in lockstep with the head, with the bit string resolving beneath it. Show the 1s landing on transitions.'],
+   ['13.4 s','Crossfade to geometry: an orange bit-cell rectangle containing 18 grains, then the full film stack with real thicknesses.'],
+   ['Caution','Do not animate the arrows flipping one at a time as the head passes — a real write reverses a whole downtrack region at once.']],
+  math:`areal density  ≈ 1.2 Tb/in²\n1 in² = 6.45 × 10¹⁴ nm²  →  ≈ 540 nm² per bit\n<i>  ≈ 50 nm track pitch × 13 nm bit length</i>\n\nSNR ≈ 10 · log₁₀(N)  <i>for N grains per bit</i>\n<i>N = 18  →  ≈ 12.6 dB before coding gain</i>`},
+
+ {vo:`The sensor is a sandwich. One magnetic layer is pinned in place, one is free to turn. The field from the bit below rotates the free layer, electron scattering changes — and so does the resistance of the whole stack. Giant magnetoresistance won Fert and Grünberg the 2007 Nobel Prize in Physics. Modern heads go further: electrons tunnel through a magnesium-oxide barrier for more than ten times the signal.`,
+  notes:[['Build','Five layers fade in bottom-up, 0.35 s apart, so the stack reads as a construction rather than an icon.'],
+   ['Coupling','The platter bit below flips on a 0.72 rad/s sine. The free-layer arrow follows it; the pinned arrow never moves. That contrast is the whole mechanism.'],
+   ['Electrons','Seven dots traverse the stack continuously. In the antiparallel state they scatter laterally and turn orange, and the R bar rises at the same instant — cause and effect must be simultaneous, not sequential.'],
+   ['14.2 s','ΔR/R card fades in; the barrier label brightens from grey to white as the narration moves from GMR to TMR.']],
+  math:`R_ap > R_p        <i>spin-dependent scattering</i>\nΔR/R  ≈ 10 %      <i>GMR, Cu spacer (1997 heads)</i>\nΔR/R  > 100 %     <i>TMR, crystalline MgO barrier (today)</i>`},
+
+ {vo:`Density has a wall. Shrink a grain far enough and ordinary room-temperature heat erases it. Stability means anisotropy times volume must beat thermal energy by a factor of about sixty. So the bits were stood upright: perpendicular recording, with a soft underlayer closing the magnetic circuit and doubling the write field. Then shingled recording — the reader is narrower than the writer, so tracks can overlap like roof tiles, at the price of rewriting a whole band at a time. And HAMR: a laser and a plasmonic antenna heat iron-platinum past four hundred and fifty degrees for under a nanosecond, so a far harder grain can be written, then frozen in place.`,
+  notes:[['Structure','Four beats of exactly 7 s, crossfaded 1.2 s. Each beat keeps the film band on the same baseline so the changes read as edits to one object.'],
+   ['Beat 1','Horizontal bits compress to 44% width, then a third of them begin flipping at random. Failure is shown, not described.'],
+   ['Beat 2','Bits stand vertical, soft underlayer slides in beneath, write pole sweeps. Magnetisation stays blue for up, dull orange for down.'],
+   ['Beat 3','Five tracks lay down in sequence, each covering the one before and leaving a narrow surviving strip. Writer and reader blocks descend together to show the width mismatch.'],
+   ['Beat 4','First full-saturation orange of the film. NFT triangle tracks along the row; the grain under it ramps to 470 °C, flips, and cools to a locked dark blue-grey. Temperature readout counts live.'],
+   ['Restraint','No glow filters. The heat reads through hue and the live number, not bloom.']],
+  math:`K_u · V / (k_B · T)  ≥  60        <i>10-year retention</i>\n\n<i>CoCrPt  K_u ≈ 5 × 10⁶ erg/cm³</i>\n<i>FePt L1₀ K_u ≈ 7 × 10⁷ erg/cm³   (≈ 10× harder)</i>\n<i>FePt Curie point ≈ 477 °C — HAMR writes just below it</i>`},
+
+ {vo:`Seventy years of engineering, in a box the size of a paperback. Thirty-six metres a second. Fifteen nanometres apart. Five years without ever touching. Marine Express — engineering, explained.`,
+  notes:[['Reassembly','The exploded stack from sequence 2 collapses over 3.6 s on the same ease curve, reversed. Same projection, same order — the viewer should recognise it.'],
+   ['04.4 s','Six figures ladder in bottom-up, 0.42 s apart, mono numerals left, plain-language labels right.'],
+   ['End','Hold the final frame for 2 s of silence before the cut to black. Logo stays bottom-right at full opacity throughout.']],
+  math:null}
+];
+const doc=el('doc');
+doc.innerHTML=`<h2>Script and shot board</h2>
+ <p class="lede">Eight sequences, 180 seconds. Narration is written for 135–145 words per minute; every figure spoken appears on screen for at least two seconds. Timecodes are the cut points used in the animation above.</p>`;
+SCENES.forEach((S,i)=>{
+  const b=SB[i], sec=document.createElement('section'); sec.className='shot';
+  sec.innerHTML=`<div class="tcode"><b>${fmt(S.t0)}</b>${String(S.d).padStart(2,'0')} s</div>
+   <div><h3>${String(i+1).padStart(2,'0')} — ${S.n}</h3>
+    <p class="vo">${b.vo}</p>
+    <ul class="notes">${b.notes.map(n=>`<li><span>${n[0]}</span><div>${n[1]}</div></li>`).join('')}</ul>
+    ${b.math?`<pre class="math">${b.math}</pre>`:''}</div>`;
+  doc.appendChild(sec);
+});
+
+</script>
+</body>
+</html>
