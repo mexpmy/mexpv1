@@ -3,9 +3,13 @@
 import React from "react";
 import NextLink from "next/link";
 import { siteConfig } from "@/config/site";
+import { usePathname } from "@/i18n/routing";
 
 export function Footer() {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
+
+  if (pathname === "/portfolio/landing-page/tiktok") return null;
 
   const legalLinks = [
     { label: "Privacy", href: "/privacy" },

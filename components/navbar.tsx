@@ -37,6 +37,8 @@ export const Navbar = () => {
   // 1. Controlled state for the mobile menu
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  if (pathname === "/portfolio/landing-page/tiktok") return null;
+
   const searchInput = (
     <Input
       aria-label="Search"
