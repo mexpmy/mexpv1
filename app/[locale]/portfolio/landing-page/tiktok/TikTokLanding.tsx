@@ -40,7 +40,7 @@ const destinations = [
     title: "Make the numbers useful.",
     description:
       "Practical finance tools that turn scattered information into clearer next moves.",
-    href: "https://saasfinance.mymexp.com",
+    href: "https://finance.mymexp.com",
     action: "Explore finance",
     tone: "coral",
   },
